@@ -2,10 +2,10 @@
 #include "ToddPolynomial.h"
 
 int main() {
-    int n = 10;
-    Todd t = Todd(n);
-    for (int i = 0; i < n + 1; ++i) {
-        std::cout << t.get_bernulli(i) << std::endl;
+    int n = 3;
+    Todd t = Todd(n, {1, 7, 4});
+    for (int i = 0; i <= n; ++i) {
+        std::cout << t.get_todd(i) << " ";
     }
-    return 0;
+    std::cout << std::endl;
 }
