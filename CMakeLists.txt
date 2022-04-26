@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(CountIntPoints VERSION 1.0 LANGUAGES CXX)
+project(CountIntPoints)
 
-add_compile_options(-I ../include)
-add_executable(CountIntPoints src/main.cpp src/ToddPolynomial.cpp)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+include_directories(CountIntPoints "./include")
+
+add_executable(CountIntPoints src/main.cpp)
+target_link_libraries(CountIntPoints gmp gmpxx)
