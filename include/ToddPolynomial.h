@@ -56,6 +56,27 @@ void Todd<TI, TF>::calc_bernulli() {
     }
 }
 
+template <>
+void Todd<mpz_class, mpf_class>::calc_bernulli() {
+    // Calculate bernulli numbers from 0 to m
+    bernulli.push_back(1);
+    bernulli.push_back(-0.5);
+    mpf_class sum(0, 128);
+    for (size_t i = 2; i <= m; ++i) {
+        if (i % 2 == 1) {
+            bernulli.push_back(0);
+            continue;
+        } else {
+            sum = 0;
+            auto pascal = calc_pascal(i + 1);
+            for (size_t k = 0; k < i; ++k) {
+                sum += pascal[k + 2] * bernulli[i - k - 1];
+            }
+            bernulli.push_back(-sum / (i + 1));
+        }
+    }
+}
+
 template <class TI, class TF>
 void Todd<TI, TF>::calc_todd() {
     // Calculate todd polynomial of degree from 0 to m
