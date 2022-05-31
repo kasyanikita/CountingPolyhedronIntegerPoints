@@ -154,9 +154,51 @@ TEST_CASE("Todd Polynomial 3 degree") {
             }
         }
     }
-    Todd<int64_t, mpf_class> t3(3, v);
-    t3.init();
-    todd = t3.get_todd();
+    Todd<int64_t, mpf_class> t2(3, v);
+    t2.init();
+    todd = t2.get_todd();
     REQUIRE(abs(todd[3] - (quad_pair_sum / 24.0 + triple_sum / 8.0)) < 1e-6);
 }
 
+
+TEST_CASE("Todd Polynomial 4 degree") {
+    std::vector<int64_t> v;
+    int n = 100;
+    uint64_t sum_pow_4 = 0, quad_pair = 0, triple_sum = 0, sum_4 = 0;
+    for (int i = 0; i < n; ++i) {
+        int rnum = random<int>(1, 10);
+        v.push_back(rnum);
+        sum_pow_4 += rnum * rnum * rnum * rnum;
+    }
+
+    for(int i = 0; i < n - 1; ++i) {
+        for(int j = i + 1; j < n; ++j) {
+            quad_pair += v[i] * v[i] * v[j] * v[j];
+        } 
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n - 1; ++j) {
+            for (int k = j + 1; k < n; ++k) {
+                if (j != i && k != i) {
+                    triple_sum += v[i] * v[i] * v[j] * v[k];
+                }
+            }
+        }
+    }
+    for (int m = 2; m < n - 1; ++m) {
+        for (int k = m + 1; k < n; ++k) {
+            int64_t pair_sum = 0;
+            for (int i = 0; i < m - 1; ++i) {
+                for (int j = i + 1; j < m; ++j) {
+                    pair_sum += v[i] * v[j];
+                }
+            }
+            sum_4 += v[m] * v[k] * pair_sum;
+        }
+    }
+    Todd<int64_t, mpf_class> t(4, v);
+    t.init();
+    auto todd = t.get_todd();
+    REQUIRE(abs(todd[4] - (-1.0 * sum_pow_4 / 720 + 1.0 * quad_pair / 144 + 1.0 * triple_sum / 48 + 1.0 * sum_4 / 16)) < 1e-6);
+}
