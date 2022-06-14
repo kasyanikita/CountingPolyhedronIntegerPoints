@@ -49,4 +49,5 @@ int main() {
     for (auto t : time) {
         out << t << std::endl;
     }
+    out.close();
 }

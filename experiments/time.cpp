@@ -15,7 +15,7 @@ T random(T range_from, T range_to) {
 }
 
 template<class TI, class TF>
-void time(size_t m, size_t n) {
+void time_fixed_input(size_t m, size_t n) {
     std::vector<TI> vfft;
     for (int i = 0; i < n; ++i) {
         int rnum = random<int>(0, 100);
@@ -48,7 +48,26 @@ void time(size_t m, size_t n) {
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
     }
-    std::ofstream out("../data/time.txt");
+    std::ofstream out("../data/time_fixed_input.txt");
+    for (auto x : times) {
+        out << x << std::endl;
+    }
+    out.close();
+}
+
+template<class TI, class TF>
+void time_fixed_degree(size_t m, size_t n) {
+    std::vector<TF> times;
+    std::vector<TI> v = {1};
+    for (int i = 1; i <= n; ++i) {
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        Todd<TI, TF> t(m, v);
+        t.init();
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
+        v.push_back(random<int>(1, 100));
+    }
+    std::ofstream out("../data/time_fixed_degree.txt");
     for (auto x : times) {
         out << x << std::endl;
     }
@@ -56,5 +75,5 @@ void time(size_t m, size_t n) {
 }
 
 int main() {
-    time<int64_t, double>(500, 10);
+    time_fixed_degree<int64_t, double>(3, 10000);
 }
