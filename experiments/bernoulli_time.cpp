@@ -13,27 +13,27 @@ std::vector<int64_t> calc_pascal(size_t n) {
 }
 
 
-std::vector<double> calc_bernulli(size_t n) {
-    // Calculate bernulli numbers from 0 to m
-    std::vector<double> bernulli;
-    bernulli.push_back(1);
-    bernulli.push_back(-0.5);
+std::vector<double> calc_bernoulli(size_t n) {
+    // Calculate bernoulli numbers from 0 to m
+    std::vector<double> bernoulli;
+    bernoulli.push_back(1);
+    bernoulli.push_back(-0.5);
     double sum = 0;
     for (size_t i = 2; i <= n; ++i) {
         if (i % 2 == 1) {
-            bernulli.push_back(0);
+            bernoulli.push_back(0);
             continue;
         } else {
             sum = 0;
             auto pascal = calc_pascal(i + 1);
             for (size_t k = 0; k < i; ++k) {
-                double x = pascal[k + 2] * bernulli[i - k - 1];
+                double x = pascal[k + 2] * bernoulli[i - k - 1];
                 sum += x;
             }
-            bernulli.push_back(-sum / (i + 1));
+            bernoulli.push_back(-sum / (i + 1));
         }
     }
-    return bernulli;
+    return bernoulli;
 }
 
 int main() {
@@ -41,7 +41,7 @@ int main() {
     int n = 1000;
     for (int i = 1; i <= n; ++i) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        auto bern = calc_bernulli(i);
+        auto bern = calc_bernoulli(i);
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         time.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
     }

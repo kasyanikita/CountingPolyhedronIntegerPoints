@@ -14,32 +14,32 @@ T random(T range_from, T range_to) {
 }
 
 
-TEST_CASE("Bernulli numbers") {
+TEST_CASE("bernoulli numbers") {
     Todd<mpz_class, mpf_class> t(30, {1, 2});
     t.init();
-    auto bernulli = t.get_bernulli();
+    auto bernoulli = t.get_bernoulli();
 
-    REQUIRE(abs(bernulli[0] - 1) < 1e-6);
-    REQUIRE(abs(bernulli[1] + 1.0/2) < 1e-6);
-    REQUIRE(abs(bernulli[2] - 1.0/6) < 1e-6);
-    REQUIRE(bernulli[3] == 0);
-    REQUIRE(abs(bernulli[4] + 1.0/30) < 1e-6);
-    REQUIRE(bernulli[5] == 0);
-    REQUIRE(abs(bernulli[6] - 1.0/42) < 1e-6);
-    REQUIRE(bernulli[7] == 0);
-    REQUIRE(abs(bernulli[8] + 1.0/30) < 1e-6);
-    REQUIRE(bernulli[9] == 0);
-    REQUIRE(abs(bernulli[10] - 5.0/66) < 1e-6);
-    REQUIRE(abs(bernulli[12] + 691.0/2730) < 1e-6);
-    REQUIRE(abs(bernulli[14] - 7.0/6) < 1e-6);
-    REQUIRE(abs(bernulli[16] + 3617.0/510) < 1e-6);
-    REQUIRE(abs(bernulli[18] - 43867.0/798) < 1e-6);
-    REQUIRE(abs(bernulli[20] + 174611.0/330) < 1e-6);
-    REQUIRE(abs(bernulli[22] - 854513.0/138) < 1e-6);
-    REQUIRE(abs(bernulli[24] + 236364091.0/2730) < 1e-6);
-    REQUIRE(abs(bernulli[26] - 8553103.0/6) < 1e-6);
-    REQUIRE(abs(bernulli[28] + 23749461029.0/870) < 1e-6);
-    REQUIRE(abs(bernulli[30] - 8615841276005.0 / 14322) < 1e-6);
+    REQUIRE(abs(bernoulli[0] - 1) < 1e-6);
+    REQUIRE(abs(bernoulli[1] + 1.0/2) < 1e-6);
+    REQUIRE(abs(bernoulli[2] - 1.0/6) < 1e-6);
+    REQUIRE(bernoulli[3] == 0);
+    REQUIRE(abs(bernoulli[4] + 1.0/30) < 1e-6);
+    REQUIRE(bernoulli[5] == 0);
+    REQUIRE(abs(bernoulli[6] - 1.0/42) < 1e-6);
+    REQUIRE(bernoulli[7] == 0);
+    REQUIRE(abs(bernoulli[8] + 1.0/30) < 1e-6);
+    REQUIRE(bernoulli[9] == 0);
+    REQUIRE(abs(bernoulli[10] - 5.0/66) < 1e-6);
+    REQUIRE(abs(bernoulli[12] + 691.0/2730) < 1e-6);
+    REQUIRE(abs(bernoulli[14] - 7.0/6) < 1e-6);
+    REQUIRE(abs(bernoulli[16] + 3617.0/510) < 1e-6);
+    REQUIRE(abs(bernoulli[18] - 43867.0/798) < 1e-6);
+    REQUIRE(abs(bernoulli[20] + 174611.0/330) < 1e-6);
+    REQUIRE(abs(bernoulli[22] - 854513.0/138) < 1e-6);
+    REQUIRE(abs(bernoulli[24] + 236364091.0/2730) < 1e-6);
+    REQUIRE(abs(bernoulli[26] - 8553103.0/6) < 1e-6);
+    REQUIRE(abs(bernoulli[28] + 23749461029.0/870) < 1e-6);
+    REQUIRE(abs(bernoulli[30] - 8615841276005.0 / 14322) < 1e-6);
 }
 
 

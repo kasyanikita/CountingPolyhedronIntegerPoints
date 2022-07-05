@@ -1,16 +1,37 @@
 #include <iostream>
 #include <vector>
+#include <random>
+#include <chrono>
+#include <fstream>
 #include <gmpxx.h>
-#include "ToddPolynomial.h"
+#include "ToddFFT.h"
+
+template<typename T>
+T random(T range_from, T range_to) {
+    std::random_device rand_dev;
+    std::mt19937 generator(rand_dev());
+    std::uniform_int_distribution<T> distr(range_from, range_to);
+    return distr(generator);
+}
 
 int main () {
+    std::vector<int64_t> v = {1, 2, 3, 4, 5};
     int n = 2;
-    std::vector<mpz_class> v = {1, 2, 10};
-    Todd<mpz_class, mpf_class> t(n, v);
+    int m = 10;
+    Todd<int64_t, double> t(m, v);
     t.init();
     auto todd = t.get_todd();
-    for (int i = 0; i <= n; ++i) {
-        std::cout << todd[i] << std::endl;
+    for (int i = 0; i < 11; ++i) {
+        std::cout << todd[i] << " ";
     }
-    return 0;
+    std::cout << std::endl;
+
+    std::vector<int64_t> vfft = {1, 2, 3, 4, 5};
+    ToddFFT<int64_t, double> tfft(m, vfft);
+    tfft.init();
+    auto toddfft = tfft.get_todd();
+    for (int i = 0; i < 11; ++i) {
+        std::cout << toddfft[i] << " ";
+    }
+    std::cout << std::endl;
 }

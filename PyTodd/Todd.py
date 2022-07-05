@@ -1,8 +1,5 @@
 from scipy.special import bernoulli
-import matplotlib.pyplot as plt
 import numpy as np
-import time
-from decimal import Decimal
 
 class Todd:
     def __init__(self, _m, _xi):

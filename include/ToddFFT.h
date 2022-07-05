@@ -11,55 +11,15 @@ template<class TI, class TF>
 class ToddFFT : public Todd<TI, TF> {
     typedef std::complex<TF> Complex;
     typedef std::valarray<Complex> CArray;
-    std::vector<TF> todd_part;
-    void calc_todd();
-    void init_todd();
-    void update_part(const TI&);
-    void mul_poly(std::vector<TF>&, std::vector<TF>&);
+    void calc_todd() override;
     void ifft(CArray&);
     void fft(CArray &);
  public:
     ToddFFT(size_t, const std::vector<TI>&);
-    void init();
 };
 
 template<class TI, class TF>
-ToddFFT<TI, TF>::ToddFFT(size_t m, const std::vector<TI>& xi): Todd<TI, TF>(m, xi), todd_part(m + 1) { }
-
-template<class TI, class TF>
-void ToddFFT<TI, TF>::update_part(const TI& x) {
-    todd_part[0] = 1;
-    TI fact = 1;
-    TI pow_x = 1;
-    for (int i = 1; i <= Todd<TI, TF>::m; ++i) {
-        fact *= i;
-        pow_x *= -x;
-        todd_part[i] = pow_x * Todd<TI, TF>::bernulli[i] / fact;
-    }
-}
-
-template<class TI, class TF>
-void ToddFFT<TI, TF>::init_todd() {
-    for (int i = 0; i <= Todd<TI, TF>::m; ++i) {
-        Todd<TI, TF>::todd[i] = todd_part[i];
-    }
-}
-
-template<class TI, class TF>
-void ToddFFT<TI, TF>::calc_todd() {
-    update_part(Todd<TI, TF>::xi[0]);
-    init_todd();
-    for (int i = 1; i < Todd<TI, TF>::xi.size(); ++i) {
-        update_part(Todd<TI, TF>::xi[i]);
-        mul_poly(Todd<TI, TF>::todd, todd_part);
-    }
-}
-
-template <class TI, class TF>
-void ToddFFT<TI, TF>::init() {
-    Todd<TI, TF>::calc_bernulli();
-    calc_todd();
-}
+ToddFFT<TI, TF>::ToddFFT(size_t m, const std::vector<TI>& xi): Todd<TI, TF>(m, xi) { }
 
 template <class TI, class TF>
 void ToddFFT<TI, TF>::fft(CArray &x) {
@@ -194,23 +154,23 @@ void ToddFFT<TI, TF>::ifft(CArray& x) {
 
 
 template <class TI, class TF>
-void ToddFFT<TI, TF>::mul_poly(std::vector<TF> &x, std::vector<TF> &y) {
+void ToddFFT<TI, TF>::calc_todd() {
     size_t n = 1;
-    size_t deg = x.size() + y.size();
+    size_t deg = Todd<TI, TF>::todd.size() + Todd<TI, TF>::todd_part.size();
     while (n < deg) {
         n = n << 1;
     }
     CArray padX(n);
     CArray padY(n);
-    for (size_t i = 0; i < x.size(); i++) {
-        padX[i] = x[i];
-		padY[i] = y[i];
+    for (size_t i = 0; i < Todd<TI, TF>::todd.size(); i++) {
+        padX[i] = Todd<TI, TF>::todd[i];
+		padY[i] = Todd<TI, TF>::todd_part[i];
     }
     fft(padX);
     fft(padY);
     padX *= padY;
     ifft(padX);
-	for (size_t i = 0; i < x.size(); ++i) {
-		x[i] = padX[i].real();
+	for (size_t i = 0; i < Todd<TI, TF>::todd.size(); ++i) {
+		Todd<TI, TF>::todd[i] = padX[i].real();
 	}
 }
