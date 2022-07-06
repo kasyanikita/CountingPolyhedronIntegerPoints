@@ -7,4 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(CountIntPoints "./include")
 
 add_executable(CountIntPoints src/main.cpp)
-target_link_libraries(CountIntPoints gmp gmpxx)
+target_link_libraries(CountIntPoints gmp gmpxx flint mpfr)

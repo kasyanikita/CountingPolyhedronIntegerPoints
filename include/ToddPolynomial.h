@@ -119,7 +119,7 @@ void Todd<TI, TF>::calc_todd() {
 
 template <class TI, class TF>
 void Todd<TI, TF>::calc_todd_arr() {
-    // Calculate todd polynomial of degree from 0 to m
+    // Calculate todd polynomials of degree from 0 to m
     update_part(xi[0]);
     init_todd();
     for (size_t i = 1; i < xi.size(); ++i) {

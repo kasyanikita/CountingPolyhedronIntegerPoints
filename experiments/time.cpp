@@ -31,7 +31,7 @@ void time_fixed_input(size_t m, size_t n) {
     }
     std::ofstream fftout("../data/time_fft.txt");
     for (auto x : times) {
-        fftout << x << std::endl;
+        fftout << mpf_class(x) << std::endl;
     }
     fftout.close();
 
@@ -50,7 +50,7 @@ void time_fixed_input(size_t m, size_t n) {
     }
     std::ofstream out("../data/time_fixed_input.txt");
     for (auto x : times) {
-        out << x << std::endl;
+        out << mpf_class(x) << std::endl;
     }
     out.close();
 }
@@ -75,5 +75,5 @@ void time_fixed_degree(size_t m, size_t n) {
 }
 
 int main() {
-    time_fixed_degree<int64_t, double>(3, 10000);
+    time_fixed_input<mpz_class, mpq_class>(50, 10);
 }
