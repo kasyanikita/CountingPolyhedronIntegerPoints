@@ -1,0 +1,2 @@
+g++ ./experiments/time.cpp -o ./experiments/time.exe -lgmp -lgmpxx -lflint -lmpfr && ./experiments/time.exe
+g++ ./experiments/error.cpp -o ./experiments/error.exe -lgmp -lgmpxx -lflint -lmpfr && ./experiments/error.exe

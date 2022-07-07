@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-// #include <chrono>
 #include <fstream>
 #include <gmpxx.h>
 #include "../include/ToddFFT.h"
@@ -15,15 +14,16 @@ T random(T range_from, T range_to) {
     return distr(generator);
 }
 
-mpq_class todd3(std::vector<mpz_class>& v, size_t n) {
-    mpz_class quad_pair_sum = 0, triple_sum = 0;
+template<class TI, class TF>
+TF todd3(std::vector<TI>& v, size_t n) {
+    TI quad_pair_sum = 0, triple_sum = 0;
     for (int i = 0; i < n; ++i) {
         int rnum = random<int>(0, 50);
-        v.push_back(mpz_class(rnum));
+        v.push_back(TI(rnum));
     }
     
     for (int k = 2; k < n; ++k) {
-        mpz_class pair_sum = 0;
+        TI pair_sum = 0;
         for (int i = 0; i < k - 1; ++i) {
             for (int j = i + 1; j < k; ++j) {
                 pair_sum = pair_sum + v[i] * v[j];
@@ -39,17 +39,18 @@ mpq_class todd3(std::vector<mpz_class>& v, size_t n) {
             }
         }
     }
-    return mpq_class(quad_pair_sum.get_d() / 24.0 + triple_sum.get_d() / 8.0);
+    return TF(quad_pair_sum) / 24.0 + TF(triple_sum) / 8.0;
 }
 
+template<class TI, class TF>
 void error(size_t n) {
     std::vector<mpf_class> error;
     std::vector<mpf_class> errorFFT;
     for (size_t i = 1; i < n; ++i) {
-        std::vector<mpz_class> v;
-        mpq_class ans = todd3(v, i);
-        Todd<mpz_class, mpq_class> todd(3, v);
-        ToddFFT<mpz_class, mpq_class> toddFFT(3, v);
+        std::vector<TI> v;
+        TF ans = todd3<TI, TF>(v, i);
+        Todd<TI, TF> todd(3, v);
+        ToddFFT<TI, TF> toddFFT(3, v);
         todd.init();
         toddFFT.init();
         auto t = todd.get_todd();
@@ -57,13 +58,13 @@ void error(size_t n) {
         error.push_back(mpf_class(abs(t[3] - ans), 1000));
         errorFFT.push_back(mpf_class(abs(tFFT[3] - ans), 1000));
     }
-    std::ofstream out("../data/error.txt");
+    std::ofstream out("data/error.txt");
     for (auto x : error) {
         out << mpf_class(x) << std::endl;
     }
     out.close();
 
-    std::ofstream outFFT("../data/error_fft.txt");
+    std::ofstream outFFT("data/error_fft.txt");
     for (auto x : errorFFT) {
         outFFT << mpf_class(x) << std::endl;
     }
@@ -71,5 +72,5 @@ void error(size_t n) {
 }
 
 int main() {
-    error(200);
+    error<mpz_class, mpq_class>(100);
 }

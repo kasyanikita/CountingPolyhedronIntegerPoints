@@ -29,7 +29,7 @@ void time_fixed_input(size_t m, size_t n) {
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
     }
-    std::ofstream fftout("../data/time_fft.txt");
+    std::ofstream fftout("data/time_fft_fixed_input.txt");
     for (auto x : times) {
         fftout << mpf_class(x) << std::endl;
     }
@@ -48,7 +48,7 @@ void time_fixed_input(size_t m, size_t n) {
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
     }
-    std::ofstream out("../data/time_fixed_input.txt");
+    std::ofstream out("data/time_fixed_input.txt");
     for (auto x : times) {
         out << mpf_class(x) << std::endl;
     }
@@ -67,13 +67,14 @@ void time_fixed_degree(size_t m, size_t n) {
         times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() / 1e9);
         v.push_back(random<int>(1, 100));
     }
-    std::ofstream out("../data/time_fixed_degree.txt");
+    std::ofstream out("data/time_fixed_degree.txt");
     for (auto x : times) {
-        out << x << std::endl;
+        out << mpf_class(x) << std::endl;
     }
     out.close();
 }
 
 int main() {
-    time_fixed_input<mpz_class, mpq_class>(50, 10);
+    time_fixed_input<mpz_class, mpq_class>(100, 10);
+    time_fixed_degree<mpz_class, mpq_class>(10, 100);
 }
