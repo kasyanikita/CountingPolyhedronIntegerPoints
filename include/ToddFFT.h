@@ -36,10 +36,11 @@ void ToddFFT<TI, TF>::calc_todd() {
         fmpq_poly_set_coeff_mpq(b, i, mpq_class(Todd<TI, TF>::todd_part[i]).get_mpq_t());
     }
     fmpq_poly_mullow(res, a, b, size);
-    fmpq_t tmp;
+    mpq_t tmp;
+    mpq_init(tmp);
     for (size_t i = 0; i < size; ++i) {
-        fmpq_poly_get_coeff_fmpq(tmp, res, i);
-        Todd<TI, TF>::todd[i] = mpq_class(fmpq_get_d(tmp));
+        fmpq_poly_get_coeff_mpq(tmp, res, i);
+        Todd<TI, TF>::todd[i] = mpq_class(tmp);
     }
 }
 
