@@ -2,7 +2,7 @@
 
 GMP Docs - https://gmplib.org/manual/
 
-FLINT Docs - http://flintlib.org/sphinx/index.html
+FLINT Docs - https://www.flintlib.org/doc/
 
 
 $$ td_3(\xi_1, \ldots, \xi_n) = \frac{1}{24}\sum_{i \neq j}\xi_i^2 \xi_j + \frac{1}{8}\sum_{i < j < k}\xi_i\xi_j\xi_k $$
