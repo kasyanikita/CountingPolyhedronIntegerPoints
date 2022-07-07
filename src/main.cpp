@@ -3,7 +3,6 @@
 #include <random>
 #include <chrono>
 #include <fstream>
-#include <gmpxx.h>
 #include "ToddFFT.h"
 
 template<typename T>
@@ -15,21 +14,21 @@ T random(T range_from, T range_to) {
 }
 
 int main () {
-    std::vector<int64_t> v = {1, 2, 3, 4, 5};
+    std::vector<mpz_class> v = {1, 2, 3, 4, 5};
     int n = 2;
     int m = 10;
-    Todd<int64_t, double> t(m, v);
+    Todd<mpz_class, mpq_class> t(m, v);
     t.init();
     auto todd = t.get_todd();
     for (int i = 0; i < 11; ++i) {
-        std::cout << todd[i] << " ";
+        std::cout << mpf_class(todd[i]) << " ";
     }
     std::cout << std::endl;
 
-    std::vector<int64_t> vfft = {1, 2, 3, 4, 5};
-    ToddFFT<int64_t, double> tfft(m, vfft);
+    std::vector<mpz_class> vfft = {1, 2, 3, 4, 5};
+    ToddFFT<mpz_class, mpq_class> tfft(m, vfft);
     tfft.init();
-    auto toddfft = tfft.get_todd();
+    auto toddfft = tfft.get_todd_mpf();
     for (int i = 0; i < 11; ++i) {
         std::cout << toddfft[i] << " ";
     }

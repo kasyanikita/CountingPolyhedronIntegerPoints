@@ -75,6 +75,6 @@ void time_fixed_degree(size_t m, size_t n) {
 }
 
 int main() {
-    time_fixed_input<mpz_class, mpq_class>(100, 10);
+    time_fixed_input<mpz_class, mpq_class>(150, 10);
     time_fixed_degree<mpz_class, mpq_class>(10, 100);
 }
