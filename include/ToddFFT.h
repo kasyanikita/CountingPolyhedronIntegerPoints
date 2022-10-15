@@ -1,3 +1,6 @@
+#ifndef INCLUDE_TODDFFT_H_
+#define INCLUDE_TODDFFT_H_
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -51,3 +54,5 @@ std::vector<mpf_class>& ToddFFT<TI, TF>::get_todd_mpf() {
     }
     return res;
 }
+
+#endif  // INCLUDE_TODDFFT_H_
