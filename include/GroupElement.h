@@ -1,115 +1,130 @@
-#ifndef INCLUDE_GROUPELEMENT_H_
-#define INCLUDE_GROUPELEMENT_H_
+#pragma once
 
-#include <vector>
-#include <algorithm>
-#include <cassert>
+#include "global_defs.h"
 
-namespace GroupNS {
-
-    using intT = int64_t;
-    using uintT = uint64_t;
-
-    inline intT modulo(intT a, intT b)
+namespace GroupIP
+{
+    inline int_t modulo(int_t x, int_t mod)
     {
-        if (b < 0) return modulo(a, -b);
-        const int result = a % b;
-        return result >= 0 ? result : result + b;
+        auto res(x % mod);
+        if (res < 0)
+            res += mod;
+        return res;
     }
 
-    class GroupElement {
-        std::vector<intT> components;
-        std::vector<intT> mod;
-        void reduce_components() {
-            for(size_t i = 0; i < components.size(); ++i) {
-                components[i] = modulo(components[i], mod[i]);
-            }
-        }
-    public:
-        GroupElement(const std::vector<intT>& m): mod(m) { }
+    class GroupElement
+    {
+        friend GroupElement operator*(int_t c, const GroupElement &x);
+        friend GroupElement operator*(const GroupElement &x, int_t c);
 
-        void assign(const std::vector<intT>& comp) {
-            assert(comp.size() == mod.size());
-            components = comp;
-            reduce_components();
-        }
+        std::vector<int_t> _components;
+        std::vector<int_t> _mod;
 
-        GroupElement operator-(const GroupElement& rhs) const {
-            assert(components.size() == rhs.components.size());
-            assert(mod == rhs.mod);
-            std::vector<intT> res_comp;
-            for (size_t i = 0; i < components.size(); ++i)
+        void normalize_components()
+        {
+            assert(_components.size() == _mod.size());
+            for (size_t i = 0; i < _components.size(); ++i)
             {
-                res_comp.push_back(components[i] - rhs.components[i]);
+                _components[i] = modulo(_components[i], _mod[i]);
             }
-            GroupElement result(mod);
-            result.assign(res_comp);
-            return result;
         }
 
-        GroupElement operator+(const GroupElement& rhs) const {
-            assert(components.size() == rhs.components.size());
-            assert(mod == rhs.mod);
-            std::vector<intT> res_comp;
-            for (size_t i = 0; i < components.size(); ++i) {
-                res_comp.push_back(components[i] + rhs.components[i]);
-            }
-            GroupElement result(mod);
-            result.assign(res_comp);
-            return result;
+    public:
+        GroupElement(std::vector<int_t> mod) : _mod(std::move(mod)) {}
+
+        void assign(std::vector<int_t> comp)
+        {
+            assert(comp.size() == _mod.size());
+            _components = std::move(comp);
+            normalize_components();
         }
 
-        GroupElement& operator+=(const GroupElement& rhs) {
-            assert(components.size() == rhs.components.size());
-            assert(mod == rhs.mod);
-            for(size_t i = 0; i < components.size(); ++i) {
-                components[i] += rhs.components[i];
+        GroupElement invert() const
+        {
+            GroupElement res(*this);
+
+            for (size_t i = 0; i < res._components.size(); ++i)
+            {
+                res._components[i] = -res._components[i];
             }
-            reduce_components();
+            res.normalize_components();
+
+            return res;
+        }
+
+        GroupElement operator-(const GroupElement &rhs) const
+        {
+            return *this + rhs.invert();
+        }
+
+        GroupElement &operator+=(const GroupElement &rhs)
+        {
+            assert(_components.size() == rhs._components.size());
+            assert(_mod == rhs._mod);
+
+            for (size_t i = 0; i < _components.size(); ++i)
+            {
+                _components[i] += rhs._components[i];
+            }
+            normalize_components();
+
             return *this;
         }
 
-        bool operator<(const GroupElement& rhs) const {
-            assert(components.size() == rhs.components.size());
-            assert(mod == rhs.mod);
-            return std::lexicographical_compare(components.begin(), components.end(),
-                                                rhs.components.begin(), rhs.components.end());
+        GroupElement operator+(const GroupElement &rhs) const
+        {
+            GroupElement res(*this);
+            res += rhs;
+            return res;
         }
 
-        size_t get_id() const {
+        bool operator<(const GroupElement &rhs) const
+        {
+            assert(_components.size() == rhs._components.size());
+            assert(_mod == rhs._mod);
+            return std::lexicographical_compare(_components.begin(), _components.end(),
+                                                rhs._components.begin(), rhs._components.end());
+        }
+
+        size_t get_idx() const
+        {
             size_t res = 0;
-            intT mult = 1;
-            for (size_t i = 0; i < mod.size(); ++i)
+            int_t mult = 1;
+            for (size_t i = 0; i < _mod.size(); ++i)
             {
-                res += static_cast<size_t>(components[i] * mult);
-                mult *= mod[i];
+                res += static_cast<size_t>(_components[i] * mult);
+                mult *= _mod[i];
             }
             return res;
         }
 
-        const std::vector<intT>& get_components() const {
-            return components;
+        const std::vector<int_t> &get_components() const
+        {
+            return _components;
         }
 
-        const std::vector<intT>& get_mod() const {
-            return mod;
+        const std::vector<int_t> &get_mod() const
+        {
+            return _mod;
         }
     };
 
-    GroupElement operator*(intT x, const GroupElement &elem) {
-        GroupElement res(elem.get_mod());
-        auto comp = elem.get_components();
-        std::vector<intT> res_comp;
-        for (size_t i = 0; i < comp.size(); ++i) {
-            res_comp.push_back(x * comp[i]);
+    GroupElement operator*(int_t c, const GroupElement &x)
+    {
+        GroupElement res(x);
+
+        for (size_t i = 0; i < res._components.size(); ++i)
+        {
+            res._components[i] *= c;
         }
-        res.assign(res_comp);
+        res.normalize_components();
+
         return res;
     }
 
-    GroupElement operator*(const GroupElement &elem, intT x) {
-        return x * elem;
+    GroupElement operator*(const GroupElement &x, int_t c)
+    {
+        return c * x;
     }
-}
 
-#endif  // INCLUDE_GROUPELEMENT_H_
+} // namespace GroupIP

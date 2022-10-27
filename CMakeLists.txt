@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(CountIntPoints)
-
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-include_directories(CountIntPoints "./include")
+
+project(CountIntPoints VERSION 1.0)
 
 add_executable(CountIntPoints src/main.cpp)
-target_link_libraries(CountIntPoints gmp gmpxx flint mpfr)
+add_executable(CountIntPoints_Tests tests/test_all.cpp)
+
+target_include_directories(CountIntPoints PUBLIC "./include")
+target_link_libraries(CountIntPoints PUBLIC gmp gmpxx flint mpfr)
+
+target_include_directories(CountIntPoints_Tests PUBLIC "./include")
+target_link_libraries(CountIntPoints_Tests PUBLIC gmp gmpxx flint mpfr)
