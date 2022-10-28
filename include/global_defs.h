@@ -9,6 +9,7 @@
 #include <cassert>
 
 #include "boost_tee_logging.h"
+#include "timer.h"
 
 namespace GroupIP
 {

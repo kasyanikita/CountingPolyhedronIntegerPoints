@@ -1,12 +1,9 @@
-#define CATCH_CONFIG_MAIN
-#include <random>
-#include <gmpxx.h>
-#include "catch.hpp"
-#include "../include/ToddPolynomial.h"
+#include "tests_defs.hpp"
+#include "../include/ToddPoly.h"
 
 TEST_CASE("bernoulli numbers")
 {
-    Todd<mpz_class, mpf_class> t(30, {1, 2});
+    ToddPoly<mpz_class, mpf_class> t(30, {1, 2});
     t.init();
     auto bernoulli = t.get_bernoulli();
 
@@ -35,12 +32,12 @@ TEST_CASE("bernoulli numbers")
 
 TEST_CASE("Todd Polynomial 0 degree")
 {
-    Todd<int64_t, mpf_class> t1(0, {10});
+    ToddPoly<int64_t, mpf_class> t1(0, {10});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(todd[0] == 1);
 
-    Todd<int64_t, mpf_class> t2(0, {10, 1, 4, 3, 6});
+    ToddPoly<int64_t, mpf_class> t2(0, {10, 1, 4, 3, 6});
     t2.init();
     todd = t2.get_todd();
     REQUIRE(todd[0] == 1);
@@ -48,13 +45,13 @@ TEST_CASE("Todd Polynomial 0 degree")
 
 TEST_CASE("Todd Polynomial 1 degree")
 {
-    Todd<int64_t, mpf_class> t1(1, {65});
+    ToddPoly<int64_t, mpf_class> t1(1, {65});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(todd[0] == 1);
     REQUIRE(todd[1] == 32.5);
 
-    Todd<int64_t, mpf_class> t2(1, {10, 27, 4, 3, 6});
+    ToddPoly<int64_t, mpf_class> t2(1, {10, 27, 4, 3, 6});
     t2.init();
     todd = t2.get_todd();
     REQUIRE(todd[0] == 1);
@@ -65,11 +62,11 @@ TEST_CASE("Todd Polynomial 1 degree")
     int64_t sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 1000);
+        int rnum = tests_rand<int>(0, 1000);
         sum += rnum;
         v.push_back(rnum);
     }
-    Todd<int64_t, mpf_class> t3(1, v);
+    ToddPoly<int64_t, mpf_class> t3(1, v);
     t3.init();
     todd = t3.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -78,7 +75,7 @@ TEST_CASE("Todd Polynomial 1 degree")
 
 TEST_CASE("Todd Polynomial 2 degree")
 {
-    Todd<int64_t, mpf_class> t1(2, {7, 10});
+    ToddPoly<int64_t, mpf_class> t1(2, {7, 10});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(todd[0] == 1);
@@ -90,7 +87,7 @@ TEST_CASE("Todd Polynomial 2 degree")
     int64_t sum = 0, quad_sum = 0, mul_sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 1000);
+        int rnum = tests_rand<int>(0, 1000);
         sum += rnum;
         quad_sum += rnum * rnum;
         v.push_back(rnum);
@@ -102,7 +99,7 @@ TEST_CASE("Todd Polynomial 2 degree")
             mul_sum += v[i] * v[j];
         }
     }
-    Todd<int64_t, mpf_class> t3(2, v);
+    ToddPoly<int64_t, mpf_class> t3(2, v);
     t3.init();
     todd = t3.get_todd();
     REQUIRE(todd[0] == 1);
@@ -112,7 +109,7 @@ TEST_CASE("Todd Polynomial 2 degree")
 
 TEST_CASE("Todd Polynomial 3 degree")
 {
-    Todd<int64_t, mpf_class> t1(3, {1, 2, 3});
+    ToddPoly<int64_t, mpf_class> t1(3, {1, 2, 3});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(todd[0] == 1);
@@ -125,7 +122,7 @@ TEST_CASE("Todd Polynomial 3 degree")
     int64_t quad_pair_sum = 0, triple_sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 50);
+        int rnum = tests_rand<int>(0, 50);
         v.push_back(rnum);
     }
 
@@ -152,7 +149,7 @@ TEST_CASE("Todd Polynomial 3 degree")
             }
         }
     }
-    Todd<int64_t, mpf_class> t2(3, v);
+    ToddPoly<int64_t, mpf_class> t2(3, v);
     t2.init();
     todd = t2.get_todd();
     REQUIRE(abs(todd[3] - (quad_pair_sum / 24.0 + triple_sum / 8.0)) < 1e-6);
@@ -165,7 +162,7 @@ TEST_CASE("Todd Polynomial 4 degree")
     uint64_t sum_pow_4 = 0, quad_pair = 0, triple_sum = 0, sum_4 = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(1, 10);
+        int rnum = tests_rand<int>(1, 10);
         v.push_back(rnum);
         sum_pow_4 += rnum * rnum * rnum * rnum;
     }
@@ -206,7 +203,7 @@ TEST_CASE("Todd Polynomial 4 degree")
             sum_4 += v[m] * v[k] * pair_sum;
         }
     }
-    Todd<int64_t, mpf_class> t(4, v);
+    ToddPoly<int64_t, mpf_class> t(4, v);
     t.init();
     auto todd = t.get_todd();
     REQUIRE(abs(todd[4] - (-1.0 * sum_pow_4 / 720 + 1.0 * quad_pair / 144 + 1.0 * triple_sum / 48 + 1.0 * sum_4 / 16)) < 1e-6);

@@ -1,5 +1,4 @@
-#define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "tests_defs.hpp"
 #include "../include/GroupElement.h"
 
 using namespace GroupIP;

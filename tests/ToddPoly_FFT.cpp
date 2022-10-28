@@ -1,16 +1,14 @@
-#define CATCH_CONFIG_MAIN
-#include <gmpxx.h>
-#include "catch.hpp"
-#include "../include/ToddFFT.h"
+#include "tests_defs.hpp"
+#include "../include/ToddPoly_FFT.h"
 
 TEST_CASE("Todd Polynomial 0 degree FFT")
 {
-    ToddFFT<int64_t, mpf_class> t1(0, {10});
+    ToddPoly_FFT<int64_t, mpf_class> t1(0, {10});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
 
-    ToddFFT<int64_t, mpf_class> t2(0, {10, 1, 4, 3, 6});
+    ToddPoly_FFT<int64_t, mpf_class> t2(0, {10, 1, 4, 3, 6});
     t2.init();
     todd = t2.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -18,13 +16,13 @@ TEST_CASE("Todd Polynomial 0 degree FFT")
 
 TEST_CASE("Todd Polynomial 1 degree FFT")
 {
-    ToddFFT<int64_t, mpf_class> t1(1, {65});
+    ToddPoly_FFT<int64_t, mpf_class> t1(1, {65});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
     REQUIRE(abs(todd[1] - 32.5) < 1e-6);
 
-    ToddFFT<int64_t, mpf_class> t2(1, {10, 27, 4, 3, 6});
+    ToddPoly_FFT<int64_t, mpf_class> t2(1, {10, 27, 4, 3, 6});
     t2.init();
     todd = t2.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -35,11 +33,11 @@ TEST_CASE("Todd Polynomial 1 degree FFT")
     int64_t sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 1000);
+        int rnum = tests_rand<int>(0, 1000);
         sum += rnum;
         v.push_back(rnum);
     }
-    ToddFFT<int64_t, mpf_class> t3(1, v);
+    ToddPoly_FFT<int64_t, mpf_class> t3(1, v);
     t3.init();
     todd = t3.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -48,7 +46,7 @@ TEST_CASE("Todd Polynomial 1 degree FFT")
 
 TEST_CASE("Todd Polynomial 2 degree FFT")
 {
-    ToddFFT<int64_t, mpf_class> t1(2, {7, 10});
+    ToddPoly_FFT<int64_t, mpf_class> t1(2, {7, 10});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -60,7 +58,7 @@ TEST_CASE("Todd Polynomial 2 degree FFT")
     int64_t sum = 0, quad_sum = 0, mul_sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 1000);
+        int rnum = tests_rand<int>(0, 1000);
         sum += rnum;
         quad_sum += rnum * rnum;
         v.push_back(rnum);
@@ -72,7 +70,7 @@ TEST_CASE("Todd Polynomial 2 degree FFT")
             mul_sum += v[i] * v[j];
         }
     }
-    ToddFFT<int64_t, mpf_class> t3(2, v);
+    ToddPoly_FFT<int64_t, mpf_class> t3(2, v);
     t3.init();
     todd = t3.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -82,7 +80,7 @@ TEST_CASE("Todd Polynomial 2 degree FFT")
 
 TEST_CASE("Todd Polynomial 3 degree FFT")
 {
-    ToddFFT<int64_t, mpf_class> t1(3, {1, 2, 3});
+    ToddPoly_FFT<int64_t, mpf_class> t1(3, {1, 2, 3});
     t1.init();
     auto todd = t1.get_todd();
     REQUIRE(abs(todd[0] - 1) < 1e-6);
@@ -95,7 +93,7 @@ TEST_CASE("Todd Polynomial 3 degree FFT")
     int64_t quad_pair_sum = 0, triple_sum = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(0, 50);
+        int rnum = tests_rand<int>(0, 50);
         v.push_back(rnum);
     }
 
@@ -122,7 +120,7 @@ TEST_CASE("Todd Polynomial 3 degree FFT")
             }
         }
     }
-    ToddFFT<int64_t, mpf_class> t2(3, v);
+    ToddPoly_FFT<int64_t, mpf_class> t2(3, v);
     t2.init();
     todd = t2.get_todd();
     REQUIRE(abs(todd[3] - (quad_pair_sum / 24.0 + triple_sum / 8.0)) < 1e-6);
@@ -135,7 +133,7 @@ TEST_CASE("Todd Polynomial 4 degree FFT")
     uint64_t sum_pow_4 = 0, quad_pair = 0, triple_sum = 0, sum_4 = 0;
     for (int i = 0; i < n; ++i)
     {
-        int rnum = random<int>(1, 10);
+        int rnum = tests_rand<int>(1, 10);
         v.push_back(rnum);
         sum_pow_4 += rnum * rnum * rnum * rnum;
     }
@@ -176,7 +174,7 @@ TEST_CASE("Todd Polynomial 4 degree FFT")
             sum_4 += v[m] * v[k] * pair_sum;
         }
     }
-    ToddFFT<int64_t, mpf_class> t(4, v);
+    ToddPoly_FFT<int64_t, mpf_class> t(4, v);
     t.init();
     auto todd = t.get_todd();
     REQUIRE(abs(todd[4] - (-1.0 * sum_pow_4 / 720 + 1.0 * quad_pair / 144 + 1.0 * triple_sum / 48 + 1.0 * sum_4 / 16)) < 1e-6);
