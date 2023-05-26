@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _TIMER_H_
+#define _TIMER_H_
 #include <chrono>
 #include <sstream>
 
@@ -42,3 +43,5 @@ namespace GroupIP
 
     Timer global_timer;
 } // namespace GrouIP
+
+#endif

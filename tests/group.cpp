@@ -1,5 +1,6 @@
 #include "tests_defs.hpp"
 #include "../include/GroupElement.h"
+#include "Dynamic.h"
 
 using namespace GroupIP;
 
@@ -130,4 +131,12 @@ TEST_CASE("Get id")
     GroupIP::int_t ans = 1 + 4 * 3 + 7 * 15;
 
     REQUIRE(group_elem.get_idx() == ans);
+}
+
+TEST_CASE("Get group element by index") {
+    using namespace GroupIP;
+    std::vector<int_t> S = {1, 2, 816};
+    auto res = get_group_element_by_index(537, S);
+    std::vector<int_t> ans({0, 1, 268});
+    REQUIRE(res.get_components() == ans);
 }

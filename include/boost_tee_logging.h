@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _BOOST_TEE_LOGGING_H_
+#define _BOOST_TEE_LOGGING_H_
 
 #include <ostream>
 #include <fstream>
@@ -53,3 +54,5 @@ namespace GroupIP
     logger default_log;
 
 } // GroupIP
+
+#endif

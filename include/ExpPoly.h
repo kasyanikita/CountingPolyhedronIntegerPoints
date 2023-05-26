@@ -18,8 +18,26 @@ namespace GroupIP
         friend ExpPoly operator*(ExpPoly &exp_poly, coeff_t c);
         friend std::ostream &operator<<(std::ostream &out, ExpPoly &exp_poly);
 
+        ExpPoly() {}
+
         ExpPoly(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff)
         {
+            assert(exp.size() == coeff.size());
+            for (size_t i = 0; i < exp.size(); ++i)
+            {
+                auto it = poly.find(exp[i]);
+                if (it != poly.end())
+                {
+                    poly[exp[i]] += coeff[i];
+                }
+                else
+                {
+                    poly.insert(std::make_pair(exp[i], coeff[i]));
+                }
+            }
+        }
+
+        void init(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff){
             assert(exp.size() == coeff.size());
             for (size_t i = 0; i < exp.size(); ++i)
             {

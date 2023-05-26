@@ -29,6 +29,13 @@ namespace GroupIP
             }
         }
 
+        bool compare(const GroupElement& ge)
+        {
+            if (_components == ge._components && _mod == ge._mod)
+                return true;
+            return false;
+        }
+
     public:
         GroupElement(std::vector<int_t> mod) : _mod(std::move(mod)) {}
 
@@ -50,6 +57,16 @@ namespace GroupIP
             res.normalize_components();
 
             return res;
+        }
+
+        bool operator==(const GroupElement& ge)
+        {
+            return compare(ge);
+        }
+
+        bool operator!=(const GroupElement &ge)
+        {
+            return !compare(ge);
         }
 
         GroupElement operator-(const GroupElement &rhs) const
