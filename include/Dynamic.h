@@ -11,7 +11,7 @@
 namespace GroupIP
 {
 
-    std::vector<int_t> scalar_vector_mul(int_t s, const std::vector<int_t>& v)
+    std::vector<int_t> scalar_vector_mul(int_t s, const std::vector<int_t> &v)
     {
         std::vector<int_t> res(v.size());
         // std::cout << "s: " << s << " vector: ";
@@ -24,7 +24,7 @@ namespace GroupIP
         return res;
     }
 
-    int_t dot_product(const std::vector<int_t>& a, const std::vector<int_t>& b)
+    int_t dot_product(const std::vector<int_t> &a, const std::vector<int_t> &b)
     {
         int_t res = 0;
         // std::cout << "Dot product: ";
@@ -94,14 +94,16 @@ namespace GroupIP
         return r_vec;
     }
 
-    int_t calc_s(GroupElement& g, GroupElement& g0, uint_t r0)
+    int_t calc_s(const GroupElement &g, const GroupElement &g0, uint_t r0)
     {
         int_t res = -1;
-        for (int i = 0; i < r0; ++i) {
-            if (i * g0 == g) {
+        for (int i = 0; i < r0; ++i)
+        {
+            if (i * g0 == g)
+            {
                 res = i;
                 break;
-            } 
+            }
         }
         return res;
     }
@@ -155,13 +157,16 @@ namespace GroupIP
         return h;
     }
 
-    GroupElement get_group_element_by_index(int_t idx, std::vector<int_t>& S) {
+    GroupElement get_group_element_by_index(int_t idx, std::vector<int_t> &S)
+    {
         int_t div = 1;
-        for (int i = 0; i < S.size() - 1; ++i) {
+        for (int i = 0; i < S.size() - 1; ++i)
+        {
             div *= S[i];
         }
         std::vector<int_t> comp(S.size(), 0);
-        for (int i = 0; i < S.size() - 1; ++i) {
+        for (int i = 0; i < S.size() - 1; ++i)
+        {
             comp[S.size() - i - 1] = idx / div;
             idx = idx % div;
             div /= S[S.size() - i - 2];
@@ -185,6 +190,7 @@ namespace GroupIP
         std::vector<std::vector<int_t>> h;
         std::vector<uint_t> r;
         std::vector<std::vector<ExpPoly>> dp;
+        std::vector<std::vector<bool>> isComputed;
         std::vector<int_t> den;
 
         void get_SNF()
@@ -200,7 +206,8 @@ namespace GroupIP
         std::vector<std::vector<ExpPoly>> init_dp()
         {
             int_t n_cols = 1;
-            for (int i = 0; i < n; ++i) {
+            for (int i = 0; i < n; ++i)
+            {
                 n_cols *= S[i];
             }
             std::vector<std::vector<ExpPoly>> res(n, std::vector<ExpPoly>(n_cols));
@@ -222,7 +229,8 @@ namespace GroupIP
             return res;
         }
 
-        void normalize() {
+        void normalize()
+        {
             auto res = d(n - 1, g[n]);
             auto res_poly = res.get_poly();
 
@@ -243,29 +251,30 @@ namespace GroupIP
             // print_vector<int_t>(b, "b");
 
             // normalize denominator
-            for (int i = 0; i < den.size(); ++i) {
+            for (int i = 0; i < den.size(); ++i)
+            {
                 den[i] = den[i] / det;
             }
 
             // print_vector<int_t>(mat_vec_mult(Aadj, b),"Aadj * b");
 
             // normalize alpha
-            for (int i = 0; i < exps.size(); ++i) {
+            for (int i = 0; i < exps.size(); ++i)
+            {
                 // std::cout << "Until exp: " << exps[i];
                 exps[i] = (dot_product(c, mat_vec_mult(Aadj, b)) + exps[i]) / det;
                 // std::cout << ", After exp: " << exps[i];
                 // std::cout << std::endl;
             }
 
-            d(n-1, g[n]) = ExpPoly(exps, coeffs);
+            d(n - 1, g[n]) = ExpPoly(exps, coeffs);
             // std::cout << d(n-1, g[n]) << std::endl;
         }
 
     public:
-        Dynamic(std::vector<int_t> c_, std::vector<std::vector<int_t>> &A_, std::vector<int_t> &b_) :
-         P(A_.size(), std::vector<int_t>(A_[0].size(), 0)),
-         Q(A_.size(), std::vector<int_t>(A_[0].size(), 0)),
-         S(A_.size(), 0)
+        Dynamic(std::vector<int_t> c_, std::vector<std::vector<int_t>> &A_, std::vector<int_t> &b_) : P(A_.size(), std::vector<int_t>(A_[0].size(), 0)),
+                                                                                                      Q(A_.size(), std::vector<int_t>(A_[0].size(), 0)),
+                                                                                                      S(A_.size(), 0)
         {
             c = c_;
             A = A_;
@@ -273,12 +282,18 @@ namespace GroupIP
             n = A.size();
         }
 
-        void init() {
+        void init()
+        {
             get_SNF();
             g = calc_g(P, b, S);
             r = calc_r(g);
             h = calc_h(A);
             dp = init_dp();
+
+            for (size_t i = 0; i < dp.size(); ++i)
+            {
+                isComputed.push_back(std::vector<bool>(dp[0].size(), false));
+            }
             // print_matrix(P, "P");
             // print_vector<int_t>(S, "S");
             // print_vector<int_t>(g[0].get_components(), "g1");
@@ -288,11 +303,13 @@ namespace GroupIP
             // print_matrix(h, "h");
         }
 
-        ExpPoly& d(uint_t k, GroupElement g) {
+        ExpPoly &d(uint_t k, GroupElement g)
+        {
             return dp[k][g.get_idx()];
         }
 
-        std::vector<std::vector<ExpPoly>> get_table() {
+        std::vector<std::vector<ExpPoly>> get_table()
+        {
             return dp;
         }
 
@@ -323,25 +340,31 @@ namespace GroupIP
             }
         }
 
-        std::vector<int_t> get_den() {
+        std::vector<int_t> get_den()
+        {
             return den;
         }
 
-        ExpPoly get_final_poly() { 
-            return d(n-1, g[n]);
+        ExpPoly get_final_poly()
+        {
+            return d(n - 1, g[n]);
         }
 
-        void start() {
+        void start()
+        {
             init_first_layer();
             // std::cout <<  << std::endl;
-            for (int k = 1; k < n; ++k) {
-                for (int i = 0; i < dp[0].size(); ++i) {
+            for (int k = 1; k < n; ++k)
+            {
+                for (int i = 0; i < dp[0].size(); ++i)
+                {
                     // j = 0
                     auto ge = get_group_element_by_index(i, S);
                     auto sum = d(k - 1, ge).monomial_multiply(-dot_product(c, scalar_vector_mul(0, h[k])), 1);
 
                     // j = 1 ... rk - 1
-                    for (int j = 1; j < r[k]; ++j) {
+                    for (int j = 1; j < r[k]; ++j)
+                    {
                         auto sum_part = d(k - 1, ge - j * g[k]).monomial_multiply(-dot_product(c, scalar_vector_mul(j, h[k])), 1);
                         // if (i == 0) {
                         //     std::cout << "f(k-1, g0 - " << j << "*" << "g2) = " << d(k - 1, ge - j * g[k]) << std::endl;
@@ -357,6 +380,58 @@ namespace GroupIP
             den = get_denominator();
             normalize();
             // std::cout << d(n-1, g[n]) << std::endl;
+        }
+
+        ExpPoly operator()(uint_t k, const GroupElement &ge)
+        {
+            auto g_idx = ge.get_idx();
+            if (isComputed[k][g_idx])
+            {
+                return dp[k][g_idx];
+            }
+            else
+            {
+                if (k != 1)
+                {
+                    auto sum = (*this)(k - 1, ge).monomial_multiply(-dot_product(c, scalar_vector_mul(0, h[k])), 1);
+
+                    // j = 1 ... rk - 1
+                    for (int j = 1; j < r[k]; ++j)
+                    {
+                        auto sum_part = (*this)(k - 1, ge - j * g[k]).monomial_multiply(-dot_product(c, scalar_vector_mul(j, h[k])), 1);
+                        // if (i == 0) {
+                        //     std::cout << "f(k-1, g0 - " << j << "*" << "g2) = " << d(k - 1, ge - j * g[k]) << std::endl;
+                        //     std::cout << "exp(-<c, >)"
+                        // }
+                        sum = sum + sum_part;
+                    }
+
+                    // save d(k, ge)
+                    dp[k][g_idx] = sum;
+                }
+                else
+                {
+                    // k = 1
+                    auto s = calc_s(ge, g[0], r[0]);
+                    // std::cout << "min(s*g1=gi) = " << s << std::endl;
+                    // std::cout << s << std::endl;
+                    int_t exp = 0;
+                    uint_t coeff = 0;
+                    // std::cout << "Init vector: ";
+                    // for (int i = 0; i < ge.get_components().size(); ++i) {
+                    //     std::cout << ge.get_components()[i] << " ";
+                    // }
+                    // std::cout << '\n';
+                    if (s != -1)
+                    {
+                        exp = -dot_product(c, scalar_vector_mul(s, h[0]));
+                        coeff = 1;
+                    }
+                    d(0, ge).init({exp}, {coeff});
+                }
+
+                isComputed[k][g_idx] = true;
+            }
         }
     };
 }
