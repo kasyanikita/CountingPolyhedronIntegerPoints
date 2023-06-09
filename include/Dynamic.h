@@ -408,6 +408,12 @@ namespace GroupIP
 
                     // save d(k, ge)
                     dp[k][g_idx] = sum;
+                    isComputed[k][g_idx] = true;
+
+                    for (GroupElement q = ge + g[k]; q != ge; q += g[k])
+                    {
+                        isComputed[k][q.get_idx()] = true;
+                    }
                 }
                 else
                 {
@@ -428,9 +434,9 @@ namespace GroupIP
                         coeff = 1;
                     }
                     d(0, ge).init({exp}, {coeff});
-                }
 
-                isComputed[k][g_idx] = true;
+                    isComputed[k][g_idx] = true;
+                }
             }
         }
     };
