@@ -132,7 +132,7 @@ void stress_simple_3d_simplex(int_t n)
 }
 
 int main() {
-    // stress_simple_triangles(10000);
+    stress_simple_2d_simplex(10000);
     // stress_random_simplex(10);
     stress_simple_3d_simplex(10000);
 

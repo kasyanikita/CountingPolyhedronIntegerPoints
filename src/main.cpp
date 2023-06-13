@@ -76,9 +76,7 @@ using namespace GroupIP;
 void one_case(std::vector<std::vector<int_t>>& A, std::vector<int_t>& b, std::vector<int_t>& c) {
     Dynamic d(c, A, b);
     d.init();
-    auto den = d.get_denominator();
-    print_vector<int_t>(den, "Denominator");
-    d.start();
+    d.new_start();
 }
 
     int main()

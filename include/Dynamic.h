@@ -377,9 +377,17 @@ namespace GroupIP
                     d(k, ge) = sum;
                 }
             }
+            // std::cout << d(n-1, g[n]) << std::endl;
             den = get_denominator();
             normalize();
-            // std::cout << d(n-1, g[n]) << std::endl;
+            // std::cout << d(n - 1, g[n]) << std::endl;
+        }
+
+        void new_start() {
+            auto res = (*this)(n - 1, g[n]);
+            den = get_denominator();
+            normalize();
+            // std::cout << d(n - 1, g[n]) << std::endl;
         }
 
         ExpPoly operator()(uint_t k, const GroupElement &ge)
@@ -391,7 +399,7 @@ namespace GroupIP
             }
             else
             {
-                if (k != 1)
+                if (k != 0)
                 {
                     auto sum = (*this)(k - 1, ge).monomial_multiply(-dot_product(c, scalar_vector_mul(0, h[k])), 1);
 
@@ -423,7 +431,7 @@ namespace GroupIP
                 }
                 else
                 {
-                    // k = 1
+                    // k = 0
                     auto s = calc_s(ge, g[0], r[0]);
                     // std::cout << "min(s*g1=gi) = " << s << std::endl;
                     // std::cout << s << std::endl;
@@ -439,10 +447,12 @@ namespace GroupIP
                         exp = -dot_product(c, scalar_vector_mul(s, h[0]));
                         coeff = 1;
                     }
-                    d(0, ge).init({exp}, {coeff});
+                    d(k, ge).init({exp}, {coeff});
 
                     isComputed[k][g_idx] = true;
                 }
+                // std::cout << "k: " << k << ", " << "g: " << g_idx << ", " << dp[k][g_idx] << std::endl;
+                return dp[k][g_idx];
             }
         }
     };

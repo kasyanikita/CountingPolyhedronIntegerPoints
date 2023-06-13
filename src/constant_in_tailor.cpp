@@ -46,7 +46,7 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
     Dynamic d(c, A, b);
     int_t n = A.size();
     d.init();
-    d.start();
+    d.new_start();
 
     // auto table = d.get_table();
     // for (int i = 0; i < table.size(); ++i) {
@@ -56,7 +56,7 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
     // }
     auto res = d.get_final_poly();
     auto den = d.get_den();
-    // print_vector<int_t>(den, "denominator");
+    print_vector<int_t>(den, "denominator");
 
     // get coeffs and exps
     auto poly = res.get_poly();
@@ -87,8 +87,8 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
         denom *= den[i]; 
     }
 
-    // std::cout << numer / denom << std::endl;
-    // print_vector<int_t>(den, "denominator"); 
+    std::cout << numer / denom << std::endl;
+    // print_vector<int_t>(den, "denominator");
     // std::cout << res << std::endl;
     return numer / denom;
 }
@@ -96,7 +96,8 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
 mpf_class count_integer_points(std::vector<std::vector<int_t>>& A, std::vector<int_t>& b) {
     mpf_class res = 0;
     // auto det = get_determinant(A);
-    auto c = get_c_vector(A, A.size());
+    // auto c = get_c_vector(A, A.size());
+    std::vector<int_t> c = {1, -1};
     for (int i = 0; i < A.size(); ++i) {
         auto Asub = get_sub_matrix(A, i);
         auto bsub = get_sub_vector(b, i);
@@ -169,17 +170,19 @@ int main() {
     // std::vector<int_t> b3 = {-2, 36};
     // res += one_case(A3, b3, c);
 
-    // std::vector<std::vector<int_t>> A = {
-    //     {-5, 1},
-    //     {1, -3},
-    //     {3, 5}};
-    // std::vector<int_t> b = {-4, -2, 36};
-
     std::vector<std::vector<int_t>> A = {
-        {0, -1},
-        {-1, 0},
-        {1, 1}};
-    std::vector<int_t> b = {0, 0, 5};
+        {-5, 1},
+        {1, -3},
+        {3, 5}};
+    std::vector<int_t> b = {-4, -2, 36};
+    std::cout << count_integer_points(A, b) << std::endl;
 
-    std::cout << (count_integer_points(A, b) - 50015001) << std::endl;
+    // std::vector<std::vector<int_t>> A = {
+    //     {0, -1},
+    //     {-1, 0},
+    //     {1, 1}};
+    // std::vector<int_t> b = {0, 0, 1};
+    // std::cout << count_integer_points(A, b) << std::endl;
+
+    // std::cout << (count_integer_points(A, b) - 50015001) << std::endl;
 }
