@@ -413,6 +413,12 @@ namespace GroupIP
                     for (GroupElement q = ge + g[k]; q != ge; q += g[k])
                     {
                         isComputed[k][q.get_idx()] = true;
+                        ExpPoly multPoly;
+                        std::vector<ExpPoly::exp_t> multPolyExps;     // = {0, -r[k] * dot_product(c, h[k])};
+                        std::vector<ExpPoly::coeff_t> multPolyCoeffs; // = {1, -1};
+                        multPoly.init(multPolyExps, multPolyCoeffs);
+                        d(k, q) = d(k, q - g[k]).monomial_multiply(-dot_product(c, h[k]), 1) +
+                                  d(k - 1, q) * multPoly;
                     }
                 }
                 else

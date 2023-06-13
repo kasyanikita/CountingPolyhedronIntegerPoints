@@ -9,8 +9,8 @@ namespace GroupIP
     public:
         using exp_t = int_t;
         using coeff_t = uint_t;
-    private:
 
+    private:
         std::unordered_map<exp_t, coeff_t> poly;
 
     public:
@@ -37,7 +37,8 @@ namespace GroupIP
             }
         }
 
-        void init(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff){
+        void init(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff)
+        {
             assert(exp.size() == coeff.size());
             for (size_t i = 0; i < exp.size(); ++i)
             {
@@ -53,7 +54,7 @@ namespace GroupIP
             }
         }
 
-        ExpPoly operator+(ExpPoly &rhs) const
+        ExpPoly operator+(const ExpPoly &rhs) const
         {
             ExpPoly res(*this);
             for (auto [k, v] : rhs.poly)
@@ -71,11 +72,22 @@ namespace GroupIP
             return res;
         }
 
+        ExpPoly operator*(const ExpPoly &rhs)
+        {
+            ExpPoly res;
+            for (auto monoIter = rhs.poly.begin(); monoIter != rhs.poly.end(); ++monoIter)
+            {
+                ExpPoly partRes = this->monomial_multiply(monoIter->first, monoIter->second);
+                res = res + partRes;
+            }
+            return res;
+        }
+
         ExpPoly monomial_multiply(exp_t exp, coeff_t coeff)
         {
             std::vector<coeff_t> coeffs;
             std::vector<exp_t> exps;
-            for (const auto & [e, c] : poly)
+            for (const auto &[e, c] : poly)
             {
                 coeffs.push_back(coeff * c);
                 exps.push_back(exp + e);
@@ -84,10 +96,10 @@ namespace GroupIP
             return res;
         }
 
-        std::vector<coeff_t> get_coeffs() 
+        std::vector<coeff_t> get_coeffs()
         {
             std::vector<coeff_t> coeffs;
-            for (const auto& [exp, coeff]: poly)
+            for (const auto &[exp, coeff] : poly)
             {
                 coeffs.push_back(coeff);
             }
@@ -147,7 +159,7 @@ namespace GroupIP
             {
                 out << coeff << "*e^" << exp << "x";
             }
-            if (i != exp_poly.poly.size()) 
+            if (i != exp_poly.poly.size())
             {
                 std::cout << "+";
             }
