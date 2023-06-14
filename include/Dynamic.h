@@ -443,6 +443,8 @@ namespace GroupIP
 
                     isComputed[k][g_idx] = true;
                 }
+
+                return dp[k][g_idx];
             }
         }
     };
