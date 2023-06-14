@@ -426,6 +426,13 @@ namespace GroupIP
             // std::cout << d(n - 1, g[n]) << std::endl;
         }
 
+        void new_start()
+        {
+            auto res = (*this)(n - 1, g[n]);
+            den = get_denominator();
+            normalize();
+        }
+
         ExpPoly operator()(uint_t k, const GroupElement &ge)
         {
             auto g_idx = ge.get_idx();
@@ -490,6 +497,7 @@ namespace GroupIP
                 // std::cout << "k: " << k << ", " << "g: " << g_idx << ", " << dp[k][g_idx] << std::endl;
                 return dp[k][g_idx];
             }
+            return dp[k][g_idx];
         }
     };
 }
