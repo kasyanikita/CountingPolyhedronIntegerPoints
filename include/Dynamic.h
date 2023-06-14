@@ -418,7 +418,7 @@ namespace GroupIP
                         std::vector<ExpPoly::coeff_t> multPolyCoeffs; // = {1, -1};
                         multPoly.init(multPolyExps, multPolyCoeffs);
                         d(k, q) = d(k, q - g[k]).monomial_multiply(-dot_product(c, h[k]), 1) +
-                                  d(k - 1, q) * multPoly;
+                                  (*this)(k - 1, q) * multPoly;
                     }
                 }
                 else
