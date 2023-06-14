@@ -359,8 +359,37 @@ namespace GroupIP
                 for (int i = 0; i < dp[0].size(); ++i)
                 {
                     // j = 0
+                    // auto begin = std::chrono::high_resolution_clock::now();
                     auto ge = get_group_element_by_index(i, S);
-                    auto sum = d(k - 1, ge).monomial_multiply(-dot_product(c, scalar_vector_mul(0, h[k])), 1);
+                    // auto end = std::chrono::high_resolution_clock::now();
+                    // group_element_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << "Get group element by index: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << std::endl;
+
+
+                    // begin = std::chrono::high_resolution_clock::now();
+                    auto scal_mul_vec = scalar_vector_mul(0, h[k]);
+                    // end = std::chrono::high_resolution_clock::now();
+                    // scalar_mult_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << "Scalar mult: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << std::endl;
+
+
+                    // begin = std::chrono::high_resolution_clock::now();
+                    auto dot_prod = -dot_product(c, scal_mul_vec);
+                    // end = std::chrono::high_resolution_clock::now();
+                    // dot_prod_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << "Dot prod: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << std::endl;
+
+
+                    // begin = std::chrono::high_resolution_clock::now();
+                    auto sum = d(k - 1, ge).monomial_multiply(dot_prod, 1);
+                    // end = std::chrono::high_resolution_clock::now();
+                    // monomial_mult_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << "Monomial mult:" << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                    // std::cout << std::endl;
+
 
                     // j = 1 ... rk - 1
                     for (int j = 1; j < r[k]; ++j)
@@ -370,7 +399,14 @@ namespace GroupIP
                         //     std::cout << "f(k-1, g0 - " << j << "*" << "g2) = " << d(k - 1, ge - j * g[k]) << std::endl;
                         //     std::cout << "exp(-<c, >)"
                         // }
+
+
+                        // begin = std::chrono::high_resolution_clock::now();
                         sum = sum + sum_part;
+                        // end = std::chrono::high_resolution_clock::now();
+                        // sum_part_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                        // std::cout << "Sum sum + sum part: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+                        // std::cout << std::endl;
                     }
 
                     // save d(k, ge)

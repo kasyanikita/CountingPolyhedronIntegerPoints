@@ -85,15 +85,17 @@ namespace GroupIP
 
         ExpPoly monomial_multiply(exp_t exp, coeff_t coeff)
         {
-            std::vector<coeff_t> coeffs;
             std::vector<exp_t> exps;
             for (const auto &[e, c] : poly)
             {
-                coeffs.push_back(coeff * c);
-                exps.push_back(exp + e);
+                exps.push_back(e);
             }
-            ExpPoly res(exps, coeffs);
-            return res;
+            for (int i = 0; i < exps.size(); ++i) {
+                auto node = poly.extract(exps[i]);
+                node.key() = exps[i] + exp;
+                poly.insert(std::move(node));
+            }
+            return *this;
         }
 
         std::vector<coeff_t> get_coeffs()

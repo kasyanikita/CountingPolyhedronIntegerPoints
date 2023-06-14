@@ -124,31 +124,44 @@ bool check_sub(std::vector<std::vector<int_t>> &A_sub, std::vector<int_t> &c) {
     // print_matrix(A_sub_adj, "A_adj");
     auto res = adj_c_multiply(A_sub_adj, c);
     // print_vector<int_t>(res, "c * Aadj");
-    return (!is_any_zero(res));
+    bool flag = is_any_zero(res);
+    // if (flag) {
+    //     print_matrix(A_sub, "A_sub");
+    //     print_matrix(A_sub_adj, "A_sub_adj");
+    //     print_vector<int_t>(res, "res");
+    // }
+    return flag;
 }
 
 bool check_subs(std::vector<std::vector<std::vector<int_t>>> &A_subs, std::vector<int_t> &c)
 {
     for (int i = 0; i < A_subs.size(); ++i) {
-        if (!check_sub(A_subs[i], c)) {
-            return false;
+        if (check_sub(A_subs[i], c)) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 std::vector<int_t> get_c_vector(std::vector<std::vector<int_t>> &A, int_t alpha)
 {
-    bool flag = false;
+    bool flag = true;
     std::vector<int_t> c;
     std::vector<std::vector<std::vector<int_t>>> A_subs;
     for (int i = 0; i < A.size(); ++i) {
         auto A_sub = get_sub_matrix(A, i);
         A_subs.push_back(A_sub);
     }
-    while (!flag){
+    while (flag){
         c = gen_rand_vector(A_subs[0].size(), -alpha, alpha);
+        for (int i = 0; i < c.size(); ++i) {
+            if (c[i] == 0) c[i] = 1;
+        }
         flag = check_subs(A_subs, c);
+        // if (flag){ 
+        //     std::cout << "Fail\n";
+        //     print_vector<int_t>(c, "c");
+        // }
         // print_vector<int_t>(c, "c");
     }
     return c;

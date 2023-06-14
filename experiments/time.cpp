@@ -1,92 +1,110 @@
-#include <iostream>
-#include <vector>
-#include <random>
 #include <chrono>
 #include <fstream>
-#include <gmpxx.h>
-#include "../include/ToddPoly_FFT.h"
+#include <vector>
+#include <iostream>
+#include <flint/fmpz_mat.h>
+#include "Counter.h"
 
-template <typename T>
-T random(T range_from, T range_to)
-{
-    std::random_device rand_dev;
-    std::mt19937 generator(rand_dev());
-    std::uniform_int_distribution<T> distr(range_from, range_to);
-    return distr(generator);
+int_t max_rand = 10;
+
+std::vector<std::vector<int_t>> get_simple_A(int_t n){
+    std::vector<std::vector<int_t>> A(n + 1, std::vector<int_t>(n, 0));
+    for (int i = 0; i < A[0].size(); ++i) {
+        A[0][i] = get_random_number(1, max_rand);
+    }
+    A[0][1] = max_rand;
+    for (int i = 1; i < A.size(); ++i) {
+        for (int j = 0; j < A[i].size(); ++j) {
+            if (i == j + 1) {
+                A[i][j] = -1;
+            } else {
+                A[i][j] = 0;
+            }
+        }
+    }
+    return A;
 }
 
-template <class TI, class TF>
-void time_fixed_input(size_t m, size_t n)
+std::vector<int_t> get_simple_b(int_t n)
 {
-    std::vector<TI> vfft;
-    for (int i = 0; i < n; ++i)
-    {
-        int rnum = random<int>(0, 100);
-        vfft.push_back(rnum);
-    }
-    std::vector<TF> times;
-    for (int i = 1; i <= m; ++i)
-    {
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        ToddPoly_FFT<TI, TF> tfft(i, vfft);
-        tfft.init();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9);
-    }
-    std::ofstream fftout("data/time_fft_fixed_input.txt");
-    for (auto x : times)
-    {
-        fftout << mpf_class(x) << std::endl;
-    }
-    fftout.close();
+    std::vector<int_t> b(n+1, 0);
+    b[0] = get_random_number(1, max_rand);
+    return b;
+}
 
-    times.clear();
-    std::vector<TI> v;
-    for (int i = 0; i < n; ++i)
-    {
-        int rnum = random<int>(0, 100);
-        v.push_back(rnum);
-    }
-    for (int i = 1; i <= m; ++i)
-    {
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        Todd<TI, TF> t(i, v);
-        t.init();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9);
-    }
-    std::ofstream out("data/time_fixed_input.txt");
+void load_to_file(const std::vector<mpf_class>& times, const std::string& path) {
+    std::ofstream out(path);
     for (auto x : times)
     {
-        out << mpf_class(x) << std::endl;
+        out << x << std::endl;
     }
     out.close();
 }
 
-template <class TI, class TF>
-void time_fixed_degree(size_t m, size_t n)
-{
-    std::vector<TF> times;
-    std::vector<TI> v = {1};
-    for (int i = 1; i <= n; ++i)
-    {
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        Todd<TI, TF> t(m, v);
-        t.init();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9);
-        v.push_back(random<int>(1, 100));
+void fixed_det(int_t n) {
+    std::vector<mpf_class> times;
+    for (int i = 2; i <= n; ++i) {
+        std::cout << i << std::endl;
+        mpf_class sum = 0;
+        for (int j = 0; j < 10; ++j) {
+            auto A = get_simple_A(i);
+            auto b = get_simple_b(i);
+            // print_matrix(A, "A");
+            // print_vector<int_t>(b, "b");
+            auto c = get_c_vector(A, A.size());
+            auto begin = std::chrono::high_resolution_clock::now();
+            auto res = count_integer_points(A, b, c);
+            // std::cout << res << std::endl;
+            auto end = std::chrono::high_resolution_clock::now();
+            sum += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+        }
+        times.push_back(sum / 10);
     }
-    std::ofstream out("data/time_fixed_degree.txt");
-    for (auto x : times)
-    {
-        out << mpf_class(x) << std::endl;
-    }
-    out.close();
+    print_vector<mpf_class>(times, "times");
+    load_to_file(times, "data/time_fixed_det.txt");
 }
 
-int main()
-{
-    time_fixed_input<mpz_class, mpq_class>(150, 10);
-    time_fixed_degree<mpz_class, mpq_class>(10, 100);
+// void fixed_dim(int_t det)
+// {
+//     std::vector<mpf_class> times;
+//     for (int i = 1; i <= det; ++i)
+//     {
+//         mpf_class sum = 0;
+//         std::cout << i << std::endl;
+//         for (int j = 0; j < 1; ++j)
+//         {
+//             auto A = get_simple_A(20);
+//             auto b = get_simple_b(20);
+//             b[0] = i;
+//             for (int k = 0; k < A[0].size(); ++k) {
+//                 A[0][k] = i;
+//             }
+//             // print_matrix(A, "A");
+//             // auto c = get_c_vector(A, A.size() * A.size());
+//             auto begin = std::chrono::high_resolution_clock::now();
+//             auto c = get_c_vector(A, A.size() * A.size());
+//             auto res = count_integer_points(A, b, c);
+//             // std::cout << res << std::endl;
+//             auto end = std::chrono::high_resolution_clock::now();
+//             sum += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
+//         }
+//         times.push_back(sum / 1);
+//     }
+//     print_vector<mpf_class>(times, "times");
+//     load_to_file(times, "data/time_fixed_dim.txt");
+// }
+
+int main() {
+
+    fixed_det(30);
+    // fixed_dim(300);
+
+    // std::vector<std::vector<int_t>> A = {
+    //     {-5, 1},
+    //     {1, -3}};
+    // std::vector<int_t> b = {-4, -2};
+    // std::vector<int_t> c = {1, 1};
+    // Dynamic d(c, A, b);
+    // d.init();
+    // d.start();
 }

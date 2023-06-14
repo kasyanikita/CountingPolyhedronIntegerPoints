@@ -134,16 +134,16 @@ void stress_simple_3d_simplex(int_t n)
 int main() {
     stress_simple_2d_simplex(10000);
     // stress_random_simplex(10);
-    stress_simple_3d_simplex(10000);
+    // stress_simple_3d_simplex(10000);
 
-    // std::vector<std::vector<int_t>> A = {
-    //     {-5, 1},
-    //     {1, -3},
-    //     {3, 5}
-    // };
-    // std::vector<int_t> b = {-4, -2, 36};
-    // auto res = count_integer_points(A, b);
-    // std::cout << "Number of integer points: " << res << std::endl;
+    std::vector<std::vector<int_t>> A = {
+        {-5, 1},
+        {1, -3},
+        {3, 5}
+    };
+    std::vector<int_t> b = {-4, -2, 36};
+    auto res = count_integer_points(A, b);
+    std::cout << "Number of integer points: " << res << std::endl;
 
     // std::vector<std::vector<int_t>> A = {
     //     {1, 1, 1},
