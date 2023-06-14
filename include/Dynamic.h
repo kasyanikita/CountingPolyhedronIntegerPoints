@@ -322,8 +322,8 @@ namespace GroupIP
                 auto s = calc_s(ge, g[0], r[0]);
                 // std::cout << "min(s*g1=gi) = " << s << std::endl;
                 // std::cout << s << std::endl;
-                int_t exp = 0;
-                uint_t coeff = 0;
+                ExpPoly::exp_t exp = 0;
+                ExpPoly::coeff_t coeff = 0;
                 // std::cout << "Init vector: ";
                 // for (int i = 0; i < ge.get_components().size(); ++i) {
                 //     std::cout << ge.get_components()[i] << " ";
@@ -414,8 +414,8 @@ namespace GroupIP
                     {
                         isComputed[k][q.get_idx()] = true;
                         ExpPoly multPoly;
-                        std::vector<ExpPoly::exp_t> multPolyExps;     // = {0, -r[k] * dot_product(c, h[k])};
-                        std::vector<ExpPoly::coeff_t> multPolyCoeffs; // = {1, -1};
+                        std::vector<ExpPoly::exp_t> multPolyExps = {0, static_cast<ExpPoly::exp_t>(-r[k]) * dot_product(c, h[k])};
+                        std::vector<ExpPoly::coeff_t> multPolyCoeffs = {1, -1};
                         multPoly.init(multPolyExps, multPolyCoeffs);
                         d(k, q) = d(k, q - g[k]).monomial_multiply(-dot_product(c, h[k]), 1) +
                                   (*this)(k - 1, q) * multPoly;
@@ -427,8 +427,8 @@ namespace GroupIP
                     auto s = calc_s(ge, g[0], r[0]);
                     // std::cout << "min(s*g1=gi) = " << s << std::endl;
                     // std::cout << s << std::endl;
-                    int_t exp = 0;
-                    uint_t coeff = 0;
+                    ExpPoly::exp_t exp = 0;
+                    ExpPoly::coeff_t coeff = 0;
                     // std::cout << "Init vector: ";
                     // for (int i = 0; i < ge.get_components().size(); ++i) {
                     //     std::cout << ge.get_components()[i] << " ";

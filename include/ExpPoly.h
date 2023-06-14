@@ -8,7 +8,7 @@ namespace GroupIP
     {
     public:
         using exp_t = int_t;
-        using coeff_t = uint_t;
+        using coeff_t = int_t;
 
     private:
         std::unordered_map<exp_t, coeff_t> poly;
