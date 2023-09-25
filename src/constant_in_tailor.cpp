@@ -56,7 +56,7 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
     // }
     auto res = d.get_final_poly();
     auto den = d.get_den();
-    print_vector<int_t>(den, "denominator");
+    // print_vector<int_t>(den, "denominator");
 
     // get coeffs and exps
     auto poly = res.get_poly();
@@ -87,7 +87,7 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
         denom *= den[i]; 
     }
 
-    std::cout << numer / denom << std::endl;
+    // std::cout << numer / denom << std::endl;
     // print_vector<int_t>(den, "denominator");
     // std::cout << res << std::endl;
     return numer / denom;

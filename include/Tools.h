@@ -9,6 +9,169 @@
 
 using namespace GroupIP;
 
+namespace GroupIP {
+
+    std::vector<int_t> scalar_vector_mul(int_t s, const std::vector<int_t> &v)
+    {
+        std::vector<int_t> res(v.size());
+        for (int i = 0; i < v.size(); ++i)
+        {
+            res[i] = s * v[i];
+        }
+        return res;
+    }
+
+    int_t dot_product(const std::vector<int_t> &a, const std::vector<int_t> &b)
+    {
+        int_t res = 0;
+        for (int i = 0; i < a.size(); ++i)
+        {
+            res += a[i] * b[i];
+        }
+        return res;
+    }
+
+    std::vector<int_t> get_mat_col(const std::vector<std::vector<int_t>> &M, int k)
+    {
+        std::vector<int_t> res;
+        for (int i = 0; i < M.size(); ++i)
+        {
+            res.push_back(M[i][k]);
+        }
+        return res;
+    }
+
+    std::vector<int_t> mat_vec_mult(const std::vector<std::vector<int_t>> &M, const std::vector<int_t> &v)
+    {
+        std::vector<int_t> res;
+        for (int i = 0; i < M.size(); ++i)
+        {
+            int_t sum = 0;
+            for (int j = 0; j < M[i].size(); ++j)
+            {
+                sum += M[i][j] * v[j];
+            }
+            res.push_back(sum);
+        }
+        return res;
+    }
+
+    std::vector<GroupElement> calc_g(const std::vector<std::vector<int_t>> &P,
+                                    const std::vector<int_t> &b, const std::vector<int_t> &S)
+    {
+        int n = b.size();
+        std::vector<GroupElement> g_vec(n + 1, GroupElement(S));
+        g_vec[n].assign(mat_vec_mult(P, b));
+        for (int i = 0; i < n; ++i)
+        {
+            g_vec[i].assign(get_mat_col(P, i));
+        }
+        return g_vec;
+    }
+
+    std::vector<uint_t> calc_r(const std::vector<GroupElement> &g_vec)
+    {
+        std::vector<int_t> e(g_vec.size() - 1, 0);
+        std::vector<uint_t> r_vec;
+        for (int i = 0; i < g_vec.size(); ++i)
+        {
+            int r = 1;
+            auto sum = g_vec[i];
+            while (sum.get_components() != e)
+            {
+                sum += g_vec[i];
+                ++r;
+            }
+            r_vec.push_back(r);
+        }
+        return r_vec;
+    }
+
+    int_t calc_s(const GroupElement &g, const GroupElement &g0, uint_t r0)
+    {
+        int_t res = -1;
+        for (int i = 0; i < r0; ++i)
+        {
+            if (i * g0 == g)
+            {
+                res = i;
+                break;
+            }
+        }
+        return res;
+    }
+
+    std::vector<std::vector<int_t>> calc_h(const std::vector<std::vector<int_t>> &A)
+    {
+        // init variables
+        std::vector<std::vector<int_t>> h(A.size(), std::vector<int_t>(A.size()));
+        fmpz_mat_t A_flint;
+        fmpz_t den;
+        fmpz_t det;
+        fmpz_mat_t Ainv;
+        fmpz_mat_init(Ainv, A.size(), A[0].size());
+        fmpz_mat_init(A_flint, A.size(), A[0].size());
+
+        // std::vector to fmpz_mat_t
+        for (int i = 0; i < A.size(); ++i)
+        {
+            for (int j = 0; j < A[i].size(); ++j)
+            {
+                auto val = fmpz_mat_entry(A_flint, i, j);
+                *val = A[i][j];
+            }
+        }
+
+        // get inverse matrix
+        fmpz_mat_det(det, A_flint);
+        int res = fmpz_mat_inv(Ainv, den, A_flint);
+        if (res == 0)
+        {
+            throw std::domain_error("Matrix A is singular");
+        }
+
+        // calculate adjugate matrix
+        if (*det != *den)
+        {
+            std::cout << "det != den" << std::endl;
+        }
+        fmpz_divexact(den, det, den);
+        fmpz_mat_scalar_divexact_fmpz(Ainv, Ainv, den);
+
+        // fmpz_mat_t to std::vector
+        for (int i = 0; i < A.size(); ++i)
+        {
+            for (int j = 0; j < A[i].size(); ++j)
+            {
+                auto val = fmpz_mat_entry(Ainv, i, j);
+                h[j][i] = fmpz_get_d(val);
+            }
+        }
+        return h;
+    }
+
+    GroupElement get_group_element_by_index(int_t idx, std::vector<int_t> &S)
+    {
+        int_t div = 1;
+        for (int i = 0; i < S.size() - 1; ++i)
+        {
+            div *= S[i];
+        }
+        std::vector<int_t> comp(S.size(), 0);
+        for (int i = 0; i < S.size() - 1; ++i)
+        {
+            comp[S.size() - i - 1] = idx / div;
+            idx = idx % div;
+            div /= S[S.size() - i - 2];
+        }
+        comp[0] = idx;
+        GroupElement res(S);
+        res.assign(comp);
+        return res;
+    }
+
+}
+
 int_t get_random_number(int_t min, int_t max)
 {
     std::random_device dev;

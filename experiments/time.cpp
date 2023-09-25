@@ -6,6 +6,7 @@
 #include "Counter.h"
 
 int_t max_rand = 10;
+int_t n_tries = 3;
 
 std::vector<std::vector<int_t>> get_simple_A(int_t n){
     std::vector<std::vector<int_t>> A(n + 1, std::vector<int_t>(n, 0));
@@ -46,7 +47,7 @@ void fixed_det(int_t n) {
     for (int i = 2; i <= n; ++i) {
         std::cout << i << std::endl;
         mpf_class sum = 0;
-        for (int j = 0; j < 10; ++j) {
+        for (int j = 0; j < n_tries; ++j) {
             auto A = get_simple_A(i);
             auto b = get_simple_b(i);
             // print_matrix(A, "A");
@@ -58,7 +59,7 @@ void fixed_det(int_t n) {
             auto end = std::chrono::high_resolution_clock::now();
             sum += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() / 1e9;
         }
-        times.push_back(sum / 10);
+        times.push_back(sum / n_tries);
     }
     print_vector<mpf_class>(times, "times");
     load_to_file(times, "data/time_fixed_det.txt");
@@ -96,7 +97,7 @@ void fixed_det(int_t n) {
 
 int main() {
 
-    fixed_det(30);
+    fixed_det(40);
     // fixed_dim(300);
 
     // std::vector<std::vector<int_t>> A = {

@@ -57,7 +57,7 @@ mpf_class count_simple_cone(std::vector<std::vector<int_t>> &A, std::vector<int_
     int_t n = A.size();
     d.init();
     // std::cout << "init\n";
-    d.start();
+    d.new_start();
     // std::cout << "F was calculated!\n";
     // auto table = d.get_table();
     // for (int i = 0; i < table.size(); ++i) {
