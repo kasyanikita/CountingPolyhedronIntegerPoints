@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COUNTINGINTEGERPOINTS_EXPPOLY_H_
+#define COUNTINGINTEGERPOINTS_EXPPOLY_H_
 
 #include "global_defs.h"
 
@@ -19,154 +20,20 @@ namespace GroupIP
         friend std::ostream &operator<<(std::ostream &out, ExpPoly &exp_poly);
 
         ExpPoly() {}
-
-        ExpPoly(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff)
-        {
-            assert(exp.size() == coeff.size());
-            for (size_t i = 0; i < exp.size(); ++i)
-            {
-                auto it = poly.find(exp[i]);
-                if (it != poly.end())
-                {
-                    poly[exp[i]] += coeff[i];
-                }
-                else
-                {
-                    poly.insert(std::make_pair(exp[i], coeff[i]));
-                }
-            }
-        }
-
-        void init(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff)
-        {
-            assert(exp.size() == coeff.size());
-            for (size_t i = 0; i < exp.size(); ++i)
-            {
-                auto it = poly.find(exp[i]);
-                if (it != poly.end())
-                {
-                    poly[exp[i]] += coeff[i];
-                }
-                else
-                {
-                    poly.insert(std::make_pair(exp[i], coeff[i]));
-                }
-            }
-        }
-
-        ExpPoly operator+(const ExpPoly &rhs) const
-        {
-            ExpPoly res(*this);
-            for (auto [k, v] : rhs.poly)
-            {
-                auto it = res.poly.find(k);
-                if (it != res.poly.end())
-                {
-                    res.poly[k] += v;
-                }
-                else
-                {
-                    res.poly[k] = v;
-                }
-            }
-            return res;
-        }
-
-        ExpPoly operator*(const ExpPoly &rhs)
-        {
-            ExpPoly res;
-            for (auto monoIter = rhs.poly.begin(); monoIter != rhs.poly.end(); ++monoIter)
-            {
-                ExpPoly partRes = this->monomial_multiply(monoIter->first, monoIter->second);
-                res = res + partRes;
-            }
-            return res;
-        }
-
-        ExpPoly monomial_multiply(exp_t exp, coeff_t coeff)
-        {
-            std::vector<exp_t> exps;
-            for (const auto &[e, c] : poly)
-            {
-                exps.push_back(e);
-            }
-            for (int i = 0; i < exps.size(); ++i) {
-                auto node = poly.extract(exps[i]);
-                node.key() = exps[i] + exp;
-                poly.insert(std::move(node));
-            }
-            return *this;
-        }
-
-        std::vector<coeff_t> get_coeffs()
-        {
-            std::vector<coeff_t> coeffs;
-            for (const auto &[exp, coeff] : poly)
-            {
-                coeffs.push_back(coeff);
-            }
-            return coeffs;
-        }
-
-        std::vector<exp_t> get_exps()
-        {
-            std::vector<exp_t> exps;
-            for (const auto &[exp, coeff] : poly)
-            {
-                exps.push_back(exp);
-            }
-            return exps;
-        }
-
-        std::unordered_map<exp_t, coeff_t> get_poly()
-        {
-            return poly;
-        }
+        ExpPoly(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff);
+        void init(const std::vector<exp_t> &exp, const std::vector<coeff_t> &coeff);
+        ExpPoly operator+(const ExpPoly &rhs) const;
+        ExpPoly operator*(const ExpPoly &rhs);
+        ExpPoly monomial_multiply(exp_t exp, coeff_t coeff);
+        std::vector<coeff_t> get_coeffs();
+        std::vector<exp_t> get_exps();
+        std::unordered_map<exp_t, coeff_t> get_poly();
     };
 
-    ExpPoly operator*(ExpPoly::coeff_t c, ExpPoly &exp_poly)
-    {
-        ExpPoly res(exp_poly);
-        for (auto [k, v] : res.poly)
-        {
-            res.poly[k] *= c;
-        }
-        return res;
-    }
-
-    ExpPoly operator*(ExpPoly &exp_poly, ExpPoly::coeff_t c)
-    {
-        return c * exp_poly;
-    }
-
-    std::ostream &operator<<(std::ostream &out, ExpPoly &exp_poly)
-    {
-        int i = 0;
-        for (auto [exp, coeff] : exp_poly.poly)
-        {
-            ++i;
-            if ((coeff == 1) && (exp == 1))
-            {
-                out << "e^x";
-            }
-            else if ((coeff == 1) && (exp != 1))
-            {
-                out << "e^" << exp << "x";
-            }
-            else if (((coeff != 1) && (exp == 1)))
-            {
-                out << coeff << "*e^x";
-            }
-            else
-            {
-                out << coeff << "*e^" << exp << "x";
-            }
-            if (i != exp_poly.poly.size())
-            {
-                std::cout << "+";
-            }
-        }
-        return out;
-    }
+    ExpPoly operator*(ExpPoly::coeff_t c, ExpPoly &exp_poly);
+    ExpPoly operator*(ExpPoly &exp_poly, ExpPoly::coeff_t c);
+    std::ostream &operator<<(std::ostream &out, ExpPoly &exp_poly);
 
 } // namespace GroupIP
+
+#endif  // COUNTINGINTEGERPOINTS_EXPPOLY_H_

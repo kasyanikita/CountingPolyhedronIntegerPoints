@@ -11,40 +11,20 @@
 #include <valarray>
 #include <cassert>
 
-#include "boost_tee_logging.h"
-#include "timer.h"
+// #include "boost_tee_logging.h"
+// #include "timer.h"
 
 namespace GroupIP
-{
+{   
+    int return66();
     using namespace std;
 
     using int_t = int64_t;
     using uint_t = uint64_t;
 
-    void print_matrix(std::vector<std::vector<int_t>> &M, std::string name)
-    {
-        std::cout << name << ":\n";
-        for (int i = 0; i < M.size(); ++i)
-        {
-            for (int j = 0; j < M[i].size(); ++j)
-            {
-                std::cout << M[i][j] << " ";
-            }
-            std::cout << '\n';
-        }
-        std::cout << "\n";
-    }
-
-    template <class T>
-    void print_vector(std::vector<T> v, std::string name)
-    {
-        std::cout << name << ": ";
-        for (int i = 0; i < v.size(); ++i)
-        {
-            std::cout << v[i] << " ";
-        }
-        std::cout << '\n';
-    }
+    using Matrix = std::vector<std::vector<int_t>>;
+    using Vector = std::vector<int_t>;
+    using uVector = std::vector<uint_t>;
 } // namespace GroupIP
 
 #endif

@@ -1,22 +1,4 @@
-#ifndef COUNTINGINTEGERPOINTS_TODDFFT_H_
-#define COUNTINGINTEGERPOINTS_TODDFFT_H_
-
-#include <flint/fmpz_poly.h>
-#include <flint/fmpq_poly.h>
-#include <gmp.h>
-#include <gmpxx.h>
-#include "ToddPoly.h"
-
-template <class TI, class TF>
-class ToddPoly_FFT : public ToddPoly<TI, TF>
-{
-    std::vector<mpf_class> res;
-    void calc_todd() override;
-
-public:
-    ToddPoly_FFT(GroupIP::int_t, const std::vector<TI> &);
-    std::vector<mpf_class> &get_todd_mpf();
-};
+#include "ToddPoly_FFT.h"
 
 template <class TI, class TF>
 ToddPoly_FFT<TI, TF>::ToddPoly_FFT(GroupIP::int_t m, const std::vector<TI> &xi)
@@ -51,5 +33,3 @@ std::vector<mpf_class> &ToddPoly_FFT<TI, TF>::get_todd_mpf() {
   }
   return res;
 }
-
-#endif  // COUNTINGINTEGERPOINTS_TODDFFT_H_
