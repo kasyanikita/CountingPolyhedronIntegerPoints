@@ -11,7 +11,6 @@ class AuxiliaryDynamic {
                    const std::vector<int_t>&, SNFClass&);
   void Init();
   const std::vector<GroupIP::GroupElement>& GetG() const;
-  const std::vector<uint_t> GetR() const;
   const std::vector<std::vector<int_t>>& GetH() const;
 
  private:
@@ -19,11 +18,9 @@ class AuxiliaryDynamic {
   std::vector<int_t> b_;
   SNFClass& snf_;
   std::vector<GroupIP::GroupElement> g_;
-  std::vector<uint_t> r_;
   std::vector<std::vector<int_t>> h_;
 
   void CalcG();
-  void CalcR();
   void CalcH();
 };
 

@@ -14,6 +14,7 @@ namespace GroupIP
 
         std::vector<int_t> _components;
         std::vector<int_t> _mod;
+        int_t order = -1;
 
         void normalize_components();
         bool compare(const GroupElement& ge);
@@ -28,6 +29,7 @@ namespace GroupIP
         GroupElement &operator+=(const GroupElement &rhs);
         GroupElement operator+(const GroupElement &rhs) const;
         bool operator<(const GroupElement &rhs) const;
+        int_t getOrder();
         size_t get_idx() const;
         const std::vector<int_t> &get_components() const;
         const std::vector<int_t> &get_mod() const;

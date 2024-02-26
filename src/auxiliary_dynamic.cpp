@@ -9,8 +9,6 @@ const std::vector<GroupIP::GroupElement>& AuxiliaryDynamic::GetG() const {
   return g_;
 }
 
-const std::vector<uint_t> AuxiliaryDynamic::GetR() const { return r_; }
-
 const std::vector<std::vector<int_t>>& AuxiliaryDynamic::GetH() const {
   return h_;
 }
@@ -29,26 +27,8 @@ void AuxiliaryDynamic::CalcG() {
   g_ = g_vec;
 }
 
-void AuxiliaryDynamic::CalcR() {
-  std::vector<int_t> e(g_.size() - 1, 0);
-  std::vector<uint_t> r_vec;
-
-  for (int i = 0; i < g_.size(); ++i) {
-    int r = 1;
-    auto sum = g_[i];
-    while (sum.get_components() != e) {
-      sum += g_[i];
-      ++r;
-    }
-    r_vec.push_back(r);
-  }
-
-  r_ = r_vec;
-}
-
 void AuxiliaryDynamic::CalcH() {
   // init variables
-  // std::vector<std::vector<int_t>> h_(A_.size(), std::vector<int_t>(A_.size()));
   fmpz_mat_t A_flint;
   fmpz_t den;
   fmpz_t det;
@@ -89,6 +69,5 @@ void AuxiliaryDynamic::CalcH() {
 
 void AuxiliaryDynamic::Init() {
     CalcG();
-    CalcR();
     CalcH();
 }

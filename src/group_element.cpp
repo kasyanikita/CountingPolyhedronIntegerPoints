@@ -81,6 +81,23 @@ size_t GroupElement::get_idx() const {
   return res;
 }
 
+int_t GroupElement::getOrder() {
+  if (order != -1) {
+    return order;
+  }
+  
+  std::vector<int_t> e(_components.size(), 0);
+  int r = 1;
+  auto sum = *this;
+  while (sum.get_components() != e) {
+    sum += *this;
+    ++r;
+  }
+  order = r;
+
+  return order;
+}
+
 const std::vector<int_t>& GroupElement::get_components() const { return _components; }
 
 const std::vector<int_t>& GroupElement::get_mod() const { return _mod; }

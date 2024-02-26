@@ -2,14 +2,6 @@
 
 namespace GroupIP {
 
-// void Dynamic::get_SNF() {
-//   std::vector<std::vector<int_t>> S_mat = A;
-//   SNF(S_mat, P, Q);
-//   for (int i = 0; i < n; ++i) {
-//     S[i] = S_mat[i][i];
-//   }
-// }
-
 std::vector<std::vector<ExpPoly>> Dynamic::init_dp() {
   auto S = snf_.GetDiagonalOfS();
   int_t n_cols = 1;
@@ -22,14 +14,14 @@ std::vector<std::vector<ExpPoly>> Dynamic::init_dp() {
 
 std::vector<int_t> Dynamic::get_denominator() {
   auto h = aux_.GetH();
-  auto r = aux_.GetR();
+  auto g = aux_.GetG();
   std::vector<int_t> res;
   for (int i = 0; i < h.size(); ++i) {
     int_t sum = 0;
     for (int j = 0; j < h[0].size(); ++j) {
       sum += c_[j] * h[i][j];
     }
-    res.push_back((r[i] * sum));
+    res.push_back((g[i].getOrder() * sum));
   }
   return res;
 }
@@ -51,27 +43,18 @@ void Dynamic::normalize() {
   // get adjugate materix and det of the matrix A
   auto Aadj = get_adjugate(A);
   auto det = get_determinant(A);
-  // std::cout << "Determinant:" << det << std::endl;
-  // print_matrix(Aadj, "Adjugate");
-  // print_vector<int_t>(b, "b");
 
   // normalize denominator
   for (int i = 0; i < den.size(); ++i) {
     den[i] = den[i] / det;
   }
 
-  // print_vector<int_t>(mat_vec_mult(Aadj, b),"Aadj * b");
-
   // normalize alpha
   for (int i = 0; i < exps.size(); ++i) {
-    // std::cout << "Until exp: " << exps[i];
     exps[i] = (dot_product(c_, mat_vec_mult(Aadj, b_)) + exps[i]) / det;
-    // std::cout << ", After exp: " << exps[i];
-    // std::cout << std::endl;
   }
 
   d(n - 1, g[n]) = ExpPoly(exps, coeffs);
-  // std::cout << d(n-1, g[n]) << std::endl;
 }
 
 Dynamic::Dynamic(const std::vector<std::vector<int_t>> &A,
@@ -80,12 +63,9 @@ Dynamic::Dynamic(const std::vector<std::vector<int_t>> &A,
 
 void Dynamic::init() {
   snf_.CalculateSNF();
-  std::cout << "Success calc snf\n";
   n = snf_.GetDiagonalOfS().size();
   aux_.Init();
-  std::cout << "Success calc aux\n";
   dp = init_dp();
-  std::cout << "Success calc dp\n";
 
   for (size_t i = 0; i < dp.size(); ++i) {
     isComputed.push_back(std::vector<bool>(dp[0].size(), false));
@@ -99,12 +79,11 @@ std::vector<std::vector<ExpPoly>> Dynamic::get_table() { return dp; }
 void Dynamic::init_first_layer() {
   auto S = snf_.GetDiagonalOfS();
   auto g = aux_.GetG();
-  auto r = aux_.GetR(); // TODO: inside group element
   auto h = aux_.GetH();
   
   for (int i = 0; i < dp[0].size(); ++i) {
     auto ge = get_group_element_by_index(i, S);
-    auto s = calc_s(ge, g[0], r[0]);
+    auto s = calc_s(ge, g[0], g[0].getOrder());
 
     int_t exp = 0;
     uint_t coeff = 0;
@@ -161,12 +140,9 @@ void Dynamic::new_start() {
 }
 
 ExpPoly Dynamic::operator()(uint_t k, const GroupElement &ge) {
-  auto r = aux_.GetR();
   auto h = aux_.GetH();
   auto g = aux_.GetG();
   auto g_idx = ge.get_idx();
-  // std::cout << "k: " << k << std::endl;
-  // std::cout << "h.size()=" << h.size() << std::endl;
 
   if (isComputed[k][g_idx]) {
     return dp[k][g_idx];
@@ -176,7 +152,7 @@ ExpPoly Dynamic::operator()(uint_t k, const GroupElement &ge) {
           -dot_product(c_, scalar_vector_mul(0, h[k])), 1);
 
       // j = 1 ... rk - 1
-      for (int j = 1; j < r[k]; ++j) {
+      for (int j = 1; j < g[k].getOrder(); ++j) {
         auto sum_part = (*this)(k - 1, ge - j * g[k])
                             .monomial_multiply(
                                 -dot_product(c_, scalar_vector_mul(j, h[k])), 1);
@@ -188,7 +164,7 @@ ExpPoly Dynamic::operator()(uint_t k, const GroupElement &ge) {
       isComputed[k][g_idx] = true;
     } else {
       // k = 0
-      auto s = calc_s(ge, g[0], r[0]);
+      auto s = calc_s(ge, g[0], g[0].getOrder());
       int_t exp = 0;
       uint_t coeff = 0;
       if (s != -1) {
