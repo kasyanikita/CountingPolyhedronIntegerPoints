@@ -6,12 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(CountIntPoints VERSION 1.0)
 
 add_executable(Main src/main.cpp src/counter.cpp
-                    src/dynamic.cpp src/group_element.cpp src/exp_poly.cpp
-                    src/smith_normal_form.cpp src/tools.cpp src/todd_poly.cpp)
+    src/dynamic.cpp src/group_element.cpp
+    src/exp_poly.cpp src/tools.cpp src/todd_poly.cpp)
 
-add_executable(Sandbox src/sandbox.cpp src/snf_class.cpp src/smith_normal_form.cpp src/counter.cpp
+add_executable(Sandbox src/sandbox.cpp src/snf_class.cpp src/counter.cpp
     src/dynamic.cpp src/group_element.cpp src/exp_poly.cpp
-    src/smith_normal_form.cpp src/tools.cpp src/todd_poly.cpp src/auxiliary_dynamic.cpp)
+    src/tools.cpp src/todd_poly.cpp src/auxiliary_dynamic.cpp)
 
 include_directories(include)
 
