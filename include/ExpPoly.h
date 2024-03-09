@@ -27,7 +27,7 @@ namespace GroupIP
         ExpPoly monomial_multiply(exp_t exp, coeff_t coeff);
         std::vector<coeff_t> get_coeffs();
         std::vector<exp_t> get_exps();
-        std::unordered_map<exp_t, coeff_t> get_poly();
+        std::unordered_map<exp_t, coeff_t> get_poly() const;
     };
 
     ExpPoly operator*(ExpPoly::coeff_t c, ExpPoly &exp_poly);

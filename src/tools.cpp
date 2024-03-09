@@ -2,6 +2,49 @@
 
 namespace GroupIP {
 
+ExpPoly vertex_normalize(const ExpPoly &num, std::vector<int_t> &den,
+                      const Matrix &A, const Vector &b, const Vector &c) {
+  auto num_poly = num.get_poly();
+
+  // init exps and coeffs
+  std::vector<ExpPoly::coeff_t> coeffs;
+  std::vector<ExpPoly::exp_t> exps;
+  for (const auto &[e, c] : num_poly) {
+    coeffs.push_back(c);
+    exps.push_back(e);
+  }
+
+  // get adjugate matrix and det of the matrix A
+  auto Aadj = get_adjugate(A);
+  auto det = get_determinant(A);
+
+  // normalize denominator
+  for (int i = 0; i < den.size(); ++i) {
+    den[i] = den[i] / det;
+  }
+
+  // normalize alpha
+  for (int i = 0; i < exps.size(); ++i) {
+    exps[i] = (dot_product(c, mat_vec_mult(Aadj, b)) + exps[i]) / det;
+  }
+
+  return ExpPoly(exps, coeffs);
+}
+
+std::vector<int_t> get_denominator(const Vector &c,
+                                   std::vector<GroupElement> &g,
+                                   const std::vector<std::vector<int_t>> &h) {
+  std::vector<int_t> res;
+  for (int i = 0; i < h.size(); ++i) {
+    int_t sum = 0;
+    for (int j = 0; j < h[0].size(); ++j) {
+      sum += c[j] * h[i][j];
+    }
+    res.push_back((g[i].getOrder() * sum));
+  }
+  return res;
+}
+
 template <class T>
 void print_vector(std::vector<T> v, std::string name) {
   std::cout << name << ": ";
@@ -60,33 +103,6 @@ std::vector<int_t> mat_vec_mult(const std::vector<std::vector<int_t>> &M,
   return res;
 }
 
-// std::vector<GroupElement> calc_g(const std::vector<std::vector<int_t>> &P,
-//                                  const std::vector<int_t> &b,
-//                                  const std::vector<int_t> &S) {
-//   int n = b.size();
-//   std::vector<GroupElement> g_vec(n + 1, GroupElement(S));
-//   g_vec[n].assign(mat_vec_mult(P, b));
-//   for (int i = 0; i < n; ++i) {
-//     g_vec[i].assign(get_mat_col(P, i));
-//   }
-//   return g_vec;
-// }
-
-// std::vector<uint_t> calc_r(const std::vector<GroupElement> &g_vec) {
-//   std::vector<int_t> e(g_vec.size() - 1, 0);
-//   std::vector<uint_t> r_vec;
-//   for (int i = 0; i < g_vec.size(); ++i) {
-//     int r = 1;
-//     auto sum = g_vec[i];
-//     while (sum.get_components() != e) {
-//       sum += g_vec[i];
-//       ++r;
-//     }
-//     r_vec.push_back(r);
-//   }
-//   return r_vec;
-// }
-
 int_t calc_s(const GroupElement &g, const GroupElement &g0, uint_t r0) {
   int_t res = -1;
   for (int i = 0; i < r0; ++i) {
@@ -97,49 +113,6 @@ int_t calc_s(const GroupElement &g, const GroupElement &g0, uint_t r0) {
   }
   return res;
 }
-
-// std::vector<std::vector<int_t>> calc_h(
-//     const std::vector<std::vector<int_t>> &A) {
-//   // init variables
-//   std::vector<std::vector<int_t>> h(A.size(), std::vector<int_t>(A.size()));
-//   fmpz_mat_t A_flint;
-//   fmpz_t den;
-//   fmpz_t det;
-//   fmpz_mat_t Ainv;
-//   fmpz_mat_init(Ainv, A.size(), A[0].size());
-//   fmpz_mat_init(A_flint, A.size(), A[0].size());
-
-//   // std::vector to fmpz_mat_t
-//   for (int i = 0; i < A.size(); ++i) {
-//     for (int j = 0; j < A[i].size(); ++j) {
-//       auto val = fmpz_mat_entry(A_flint, i, j);
-//       *val = A[i][j];
-//     }
-//   }
-
-//   // get inverse matrix
-//   fmpz_mat_det(det, A_flint);
-//   int res = fmpz_mat_inv(Ainv, den, A_flint);
-//   if (res == 0) {
-//     throw std::domain_error("Matrix A is singular");
-//   }
-
-//   // calculate adjugate matrix
-//   if (*det != *den) {
-//     std::cout << "det != den" << std::endl;
-//   }
-//   fmpz_divexact(den, det, den);
-//   fmpz_mat_scalar_divexact_fmpz(Ainv, Ainv, den);
-
-//   // fmpz_mat_t to std::vector
-//   for (int i = 0; i < A.size(); ++i) {
-//     for (int j = 0; j < A[i].size(); ++j) {
-//       auto val = fmpz_mat_entry(Ainv, i, j);
-//       h[j][i] = fmpz_get_d(val);
-//     }
-//   }
-//   return h;
-// }
 
 GroupElement get_group_element_by_index(int_t idx, std::vector<int_t> &S) {
   int_t div = 1;
@@ -167,7 +140,7 @@ int_t get_random_number(int_t min, int_t max) {
   return dist(rng);
 }
 
-int_t get_determinant(std::vector<std::vector<int_t>> &A) {
+int_t get_determinant(const GroupIP::Matrix &A) {
   fmpz_mat_t Af;
   fmpz_t det;
   fmpz_mat_init(Af, A.size(), A[0].size());
@@ -263,15 +236,8 @@ bool is_any_zero(std::vector<int_t> &v) {
 
 bool check_sub(std::vector<std::vector<int_t>> &A_sub, std::vector<int_t> &c) {
   auto A_sub_adj = get_adjugate(A_sub);
-  // print_matrix(A_sub_adj, "A_adj");
   auto res = adj_c_multiply(A_sub_adj, c);
-  // print_vector<int_t>(res, "c * Aadj");
   bool flag = is_any_zero(res);
-  // if (flag) {
-  //     print_matrix(A_sub, "A_sub");
-  //     print_matrix(A_sub_adj, "A_sub_adj");
-  //     print_vector<int_t>(res, "res");
-  // }
   return flag;
 }
 

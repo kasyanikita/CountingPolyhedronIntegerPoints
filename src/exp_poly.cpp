@@ -79,7 +79,7 @@ std::vector<ExpPoly::exp_t> ExpPoly::get_exps() {
   return exps;
 }
 
-std::unordered_map<ExpPoly::exp_t, ExpPoly::coeff_t> ExpPoly::get_poly() {
+std::unordered_map<ExpPoly::exp_t, ExpPoly::coeff_t> ExpPoly::get_poly() const {
   return poly;
 }
 

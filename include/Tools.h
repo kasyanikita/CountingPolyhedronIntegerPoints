@@ -25,19 +25,17 @@ std::vector<int_t> get_mat_col(const std::vector<std::vector<int_t>> &M,
                                int k);
 std::vector<int_t> mat_vec_mult(const std::vector<std::vector<int_t>> &M,
                                 const std::vector<int_t> &v);
-// std::vector<GroupElement> calc_g(const std::vector<std::vector<int_t>> &P,
-//                                  const std::vector<int_t> &b,
-//                                  const std::vector<int_t> &S);
-// std::vector<uint_t> calc_r(const std::vector<GroupElement> &g_vec);
 int_t calc_s(const GroupElement &g, const GroupElement &g0, uint_t r0);
-// std::vector<std::vector<int_t>> calc_h(
-//     const std::vector<std::vector<int_t>> &A);
 GroupElement get_group_element_by_index(int_t idx, std::vector<int_t> &S);
-
+ExpPoly vertex_normalize(const ExpPoly &num, std::vector<int_t> &den,
+                         const Matrix &A, const Vector &b, const Vector &c);
+std::vector<int_t> get_denominator(const Vector &c,
+                                   std::vector<GroupElement> &g,
+                                   const std::vector<std::vector<int_t>> &h);
 }  // namespace GroupIP
 
 int_t get_random_number(int_t min, int_t max);
-int_t get_determinant(std::vector<std::vector<int_t>> &A);
+int_t get_determinant(const GroupIP::Matrix &A);
 std::vector<std::vector<int_t>> get_sub_matrix(
     std::vector<std::vector<int_t>> &A, int_t row_to_exclude);
 std::vector<int_t> get_sub_vector(std::vector<int_t> &b, int_t row_to_exclude);

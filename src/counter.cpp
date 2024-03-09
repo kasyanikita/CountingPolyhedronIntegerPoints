@@ -7,16 +7,23 @@ Counter::Counter(Matrix& A, Vector& b) {
 
 mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
 
-  //init dynamic
+  //init 
+  SNFClass snf(A);
+  AuxiliaryDynamic aux(A, b, snf);
   Dynamic d(A, b, c);
   int_t n = A.size();
 
+  snf.CalculateSNF();
+  aux.Init();
   d.init();
-  std::cout << "Init success!\n";
-  d.new_start();
-  std::cout << "New start success!\n";
-  auto res = d.get_final_poly();
-  auto den = d.get_den();
+
+  auto g = aux.GetG();
+  auto h = aux.GetH();
+  auto num = d(n - 1, g[n]);
+  auto den = GroupIP::get_denominator(c, g, h);
+
+  num = GroupIP::vertex_normalize(num, den, A, b, c);
+
   std::vector<mpz_class> den_mpz(den.size());
 
   for (int i = 0; i < den.size(); ++i) {
@@ -24,7 +31,7 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
   }
 
   // get coeffs and exps
-  auto poly = res.get_poly();
+  auto poly = num.get_poly();
   std::vector<ExpPoly::coeff_t> coeffs;
   std::vector<ExpPoly::exp_t> exps;
   for (const auto &[exp, coeff] : poly) {
@@ -34,6 +41,7 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
 
   ToddPoly_FFT<mpz_class, mpf_class> todd_poly(n, den_mpz);
   todd_poly.init();
+
   auto todd = todd_poly.get_todd();
   auto sum_alpha = get_sum_exps(n, exps, coeffs, todd);
   mpf_class numer = 0;
@@ -52,9 +60,10 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
 
 mpf_class Counter::count_integer_points(Matrix& A, Vector& b) {
   mpf_class res = 0;
+
   // auto det = get_determinant(A);
-  // auto c = get_c_vector(A, A.size());
-  std::vector<int_t> c = {1, -1};
+  auto c = get_c_vector(A, A.size());
+  // std::vector<int_t> c = {1, -1};
   for (int i = 0; i < A.size(); ++i) {
     auto Asub = get_sub_matrix(A, i);
     auto bsub = get_sub_vector(b, i);
