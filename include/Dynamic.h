@@ -14,19 +14,18 @@ namespace GroupIP
 {
     class Dynamic
     {
-        SNFClass snf_;
-        AuxiliaryDynamic aux_;
-        int_t n;
-        std::vector<int_t> c_;
-        std::vector<int_t> b_;
+        int_t n_;
+        Vector c_;
+        Matrix h_;
+        std::vector<GroupIP::GroupElement> g_;
         std::vector<std::vector<ExpPoly>> dp;
         std::vector<std::vector<bool>> isComputed;
-        std::vector<std::vector<ExpPoly>> init_dp();
+        std::vector<std::vector<ExpPoly>> init_dp(const Vector&) const;
 
     public:
-     Dynamic(const std::vector<std::vector<int_t>> &, const std::vector<int_t> &,
-             const std::vector<int_t>&);
-     void init();
+     Dynamic(const Vector &, const std::vector<GroupIP::GroupElement> &,
+             const Matrix &);
+     void Init(const Vector &);
      ExpPoly &d(uint_t k, GroupElement g);
      ExpPoly operator()(uint_t k, const GroupElement &ge);
     };

@@ -7,18 +7,20 @@ Counter::Counter(Matrix& A, Vector& b) {
 
 mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
 
-  //init 
+  //init
+  int_t n = A.size();
   SNFClass snf(A);
   AuxiliaryDynamic aux(A, b, snf);
-  Dynamic d(A, b, c);
-  int_t n = A.size();
-
   snf.CalculateSNF();
   aux.Init();
-  d.init();
 
   auto g = aux.GetG();
   auto h = aux.GetH();
+  auto snf_vector = snf.GetDiagonalOfS();
+
+  Dynamic d(c, g, h);
+  d.Init(snf_vector);
+
   auto num = d(n - 1, g[n]);
   auto den = GroupIP::get_denominator(c, g, h);
 
