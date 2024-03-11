@@ -60,9 +60,9 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
 
 mpf_class Counter::count_integer_points(Matrix& A, Vector& b) {
   mpf_class res = 0;
-
+  HyperplaneAvoidSolver hyperplane_avoid_vector(A);
   // auto det = get_determinant(A);
-  auto c = get_c_vector(A, A.size());
+  auto c = hyperplane_avoid_vector.get_vector(A.size());
   // std::vector<int_t> c = {1, -1};
   for (int i = 0; i < A.size(); ++i) {
     auto Asub = get_sub_matrix(A, i);

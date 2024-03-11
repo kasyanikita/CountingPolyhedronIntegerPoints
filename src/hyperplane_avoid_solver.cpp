@@ -1,8 +1,8 @@
-#include "c_vector.h"
+#include "hyperplane_avoid_solver.h"
 
 namespace GroupIP {
 
-    Vector CVector::get_c_vector(int_t alpha) {
+    Vector HyperplaneAvoidSolver::get_vector(int_t alpha) {
         bool flag = true;
         Vector c;
         std::vector<std::vector<std::vector<int_t>>> A_subs;

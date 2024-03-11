@@ -7,14 +7,14 @@
 
 namespace GroupIP {
 
-    class CVector {
+    class HyperplaneAvoidSolver {
       private:
         Vector c_;
         Matrix A_;
 
       public:
-        CVector(const Matrix& A): A_(A) {}
-        Vector get_c_vector(int_t);
+        HyperplaneAvoidSolver(const Matrix& A) : A_(A) {}
+        Vector get_vector(int_t);
     };
 }
 

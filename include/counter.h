@@ -11,6 +11,7 @@
 #include "ToddPoly_FFT.h"
 #include "Tools.h"
 #include "flint/fmpz_mat.h"
+#include "hyperplane_avoid_solver.h"
 
 class Counter {
  private:
