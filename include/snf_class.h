@@ -13,29 +13,29 @@ using namespace GroupIP;
 
 class SNFClass {
  public:
-  explicit SNFClass(const std::vector<std::vector<int_t>>&);
+  explicit SNFClass(const Matrix&);
 
   void CalculateSNF();
 
-  const std::vector<std::vector<int_t>>& GetA() const;
-  const std::vector<std::vector<int_t>>& GetP() const;
-  const std::vector<std::vector<int_t>>& GetS() const;
-  const std::vector<std::vector<int_t>>& GetQ() const;
-  const std::vector<int_t>& GetDiagonalOfS() const;
+  const Matrix& GetA() const;
+  const Matrix& GetP() const;
+  const Matrix& GetS() const;
+  const Matrix& GetQ() const;
+  const Vector& GetDiagonalOfS() const;
 
  private:
   using snf_int_type = mpz_class;
   using eigen_mat = Eigen::Matrix<snf_int_type, Eigen::Dynamic, Eigen::Dynamic>;
   using my_DF_algo = LatLib::my_diagonal_form_algo<snf_int_type>;
 
-  std::vector<std::vector<int_t>> A_;
-  std::vector<std::vector<int_t>> P_;  // Matrix P.
-  std::vector<std::vector<int_t>> S_;  // Matrix S.
-  std::vector<std::vector<int_t>> Q_;  // Matrix Q.
+  Matrix A_;
+  Matrix P_;  // Matrix P.
+  Matrix S_;  // Matrix S.
+  Matrix Q_;  // Matrix Q.
 
-  std::vector<std::vector<int_t>> eigen2vector(eigen_mat);
+  Matrix eigen2vector(eigen_mat);
 
-  std::vector<int_t> s_diagonal_;  // Diagonal elements of S.
+  Vector s_diagonal_;  // Diagonal elements of S.
 
   void InitializeIdentityMatrices();
   void ExtractDiagonalOfS();

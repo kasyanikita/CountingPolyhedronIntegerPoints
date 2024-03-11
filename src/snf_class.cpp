@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-SNFClass::SNFClass(const std::vector<std::vector<int_t>>& A) : A_(A) {
+SNFClass::SNFClass(const Matrix& A) : A_(A) {
   InitializeIdentityMatrices();
 }
 
@@ -39,19 +39,19 @@ std::vector<std::vector<int_t>> SNFClass::eigen2vector(eigen_mat matrix) {
   return res;
 }
 
-const std::vector<std::vector<int_t>>& SNFClass::GetA() const { return A_; }
-const std::vector<std::vector<int_t>>& SNFClass::GetP() const { return P_; }
-const std::vector<std::vector<int_t>>& SNFClass::GetS() const { return S_; }
-const std::vector<std::vector<int_t>>& SNFClass::GetQ() const { return Q_; }
-const std::vector<int_t>& SNFClass::GetDiagonalOfS() const {
+const Matrix& SNFClass::GetA() const { return A_; }
+const Matrix& SNFClass::GetP() const { return P_; }
+const Matrix& SNFClass::GetS() const { return S_; }
+const Matrix& SNFClass::GetQ() const { return Q_; }
+const Vector& SNFClass::GetDiagonalOfS() const {
   return s_diagonal_;
 }
 
 void SNFClass::InitializeIdentityMatrices() {
   if (!S_.empty()) {
     size_t size = S_.size();
-    P_ = std::vector<std::vector<int_t>>(size, std::vector<int_t>(size, 0));
-    Q_ = std::vector<std::vector<int_t>>(size, std::vector<int_t>(size, 0));
+    P_ = Matrix(size, Vector(size, 0));
+    Q_ = Matrix(size, Vector(size, 0));
 
     for (size_t i = 0; i < size; ++i) {
       P_[i][i] = 1;
