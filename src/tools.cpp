@@ -8,7 +8,7 @@ std::vector<GroupIP::GroupElement> CalculateGroupElements(const Matrix& P, const
   int n = b.size();
   std::vector<GroupElement> g(n + 1, GroupElement(snf_diagonal));
   g[n].assign(mat_vec_mult(P, b));
-  
+
   for (int i = 0; i < n; ++i) {
     g[i].assign(get_mat_col(P, i));
   }
@@ -17,44 +17,15 @@ std::vector<GroupIP::GroupElement> CalculateGroupElements(const Matrix& P, const
 }
 
 Matrix CalculateH(const Matrix &A) {
-  // init variables
-  fmpz_mat_t A_flint;
-  fmpz_t den;
-  fmpz_t det;
-  fmpz_mat_t Ainv;
-  fmpz_mat_init(Ainv, A.size(), A[0].size());
-  fmpz_mat_init(A_flint, A.size(), A[0].size());
   Matrix h(A.size(), Vector(A.size()));
+  auto Aadj = CalculateAdjugateMatrix(A);
 
-  // std::vector to fmpz_mat_t
   for (int i = 0; i < A.size(); ++i) {
     for (int j = 0; j < A[i].size(); ++j) {
-      auto val = fmpz_mat_entry(A_flint, i, j);
-      *val = A[i][j];
+      h[j][i] = Aadj[i][j];
     }
   }
-
-  // get inverse matrix
-  fmpz_mat_det(det, A_flint);
-  int res = fmpz_mat_inv(Ainv, den, A_flint);
-  if (res == 0) {
-    throw std::domain_error("Matrix A is singular");
-  }
-
-  // calculate adjugate matrix
-  if (*det != *den) {
-    std::cout << "det != den" << std::endl;
-  }
-  fmpz_divexact(den, det, den);
-  fmpz_mat_scalar_divexact_fmpz(Ainv, Ainv, den);
-
-  // fmpz_mat_t to std::vector
-  for (int i = 0; i < A.size(); ++i) {
-    for (int j = 0; j < A[i].size(); ++j) {
-      auto val = fmpz_mat_entry(Ainv, i, j);
-      h[j][i] = fmpz_get_d(val);
-    }
-  }
+  
   return h;
 }
 
@@ -71,7 +42,7 @@ ExpPoly vertex_normalize(const ExpPoly &num, std::vector<int_t> &den,
   }
 
   // get adjugate matrix and det of the matrix A
-  auto Aadj = get_adjugate(A);
+  auto Aadj = CalculateAdjugateMatrix(A);
   auto det = get_determinant(A);
 
   // normalize denominator
@@ -236,8 +207,7 @@ std::vector<int_t> gen_rand_vector(int_t n, int_t a, int_t b) {
   return v;
 }
 
-std::vector<std::vector<int_t>> get_adjugate(
-    const std::vector<std::vector<int_t>> &A) {
+Matrix CalculateAdjugateMatrix(const Matrix &A) {
   fmpz_mat_t Aadj;
   fmpz_t den;
   fmpz_t det;
@@ -291,7 +261,7 @@ bool is_any_zero(std::vector<int_t> &v) {
 }
 
 bool check_sub(std::vector<std::vector<int_t>> &A_sub, std::vector<int_t> &c) {
-  auto A_sub_adj = get_adjugate(A_sub);
+  auto A_sub_adj = CalculateAdjugateMatrix(A_sub);
   auto res = adj_c_multiply(A_sub_adj, c);
   bool flag = is_any_zero(res);
   return flag;
@@ -305,30 +275,6 @@ bool check_subs(std::vector<std::vector<std::vector<int_t>>> &A_subs,
     }
   }
   return false;
-}
-
-std::vector<int_t> get_c_vector(std::vector<std::vector<int_t>> &A,
-                                int_t alpha) {
-  bool flag = true;
-  std::vector<int_t> c;
-  std::vector<std::vector<std::vector<int_t>>> A_subs;
-  for (int i = 0; i < A.size(); ++i) {
-    auto A_sub = get_sub_matrix(A, i);
-    A_subs.push_back(A_sub);
-  }
-  while (flag) {
-    c = gen_rand_vector(A_subs[0].size(), -alpha, alpha);
-    for (int i = 0; i < c.size(); ++i) {
-      if (c[i] == 0) c[i] = 1;
-    }
-    flag = check_subs(A_subs, c);
-    // if (flag){
-    //     std::cout << "Fail\n";
-    //     print_vector<int_t>(c, "c");
-    // }
-    // print_vector<int_t>(c, "c");
-  }
-  return c;
 }
 
 std::vector<mpf_class> get_sum_exps(

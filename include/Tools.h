@@ -43,16 +43,13 @@ std::vector<std::vector<int_t>> get_sub_matrix(
     std::vector<std::vector<int_t>> &A, int_t row_to_exclude);
 std::vector<int_t> get_sub_vector(std::vector<int_t> &b, int_t row_to_exclude);
 std::vector<int_t> gen_rand_vector(int_t n, int_t a, int_t b);
-std::vector<std::vector<int_t>> get_adjugate(
-    const std::vector<std::vector<int_t>> &A);
+Matrix CalculateAdjugateMatrix(const Matrix &A);
 std::vector<int_t> adj_c_multiply(std::vector<std::vector<int_t>> &Aadj,
                                   std::vector<int_t> &c);
 bool is_any_zero(std::vector<int_t> &v);
 bool check_sub(std::vector<std::vector<int_t>> &A_sub, std::vector<int_t> &c);
 bool check_subs(std::vector<std::vector<std::vector<int_t>>> &A_subs,
                 std::vector<int_t> &c);
-std::vector<int_t> get_c_vector(std::vector<std::vector<int_t>> &A,
-                                int_t alpha);
 std::vector<mpf_class> get_sum_exps(
     int_t n, std::vector<ExpPoly::exp_t> exps,  // std::vector<mpf_class>
     std::vector<ExpPoly::coeff_t> coeffs, std::vector<mpf_class> todd);
