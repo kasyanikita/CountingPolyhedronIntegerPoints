@@ -10,16 +10,15 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
   //init
   int_t n = A.size();
   SNFClass snf(A);
-  AuxiliaryDynamic aux(A, b, snf);
   snf.CalculateSNF();
-  aux.Init();
 
-  auto g = aux.GetG();
-  auto h = aux.GetH();
-  auto snf_vector = snf.GetDiagonalOfS();
+  auto snf_diagonal = snf.GetDiagonalOfS();
+  auto P = snf.GetP();
+  auto g = CalculateGroupElements(P, snf_diagonal, b);
+  auto h = CalculateH(A);
 
   Dynamic d(c, g, h);
-  d.Init(snf_vector);
+  d.Init(snf_diagonal);
 
   auto num = d(n - 1, g[n]);
   auto den = GroupIP::get_denominator(c, g, h);

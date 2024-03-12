@@ -2,6 +2,62 @@
 
 namespace GroupIP {
 
+std::vector<GroupIP::GroupElement> CalculateGroupElements(const Matrix& P, const Vector &snf_diagonal,
+                                                          const Vector &b) {
+
+  int n = b.size();
+  std::vector<GroupElement> g(n + 1, GroupElement(snf_diagonal));
+  g[n].assign(mat_vec_mult(P, b));
+  
+  for (int i = 0; i < n; ++i) {
+    g[i].assign(get_mat_col(P, i));
+  }
+
+  return g;
+}
+
+Matrix CalculateH(const Matrix &A) {
+  // init variables
+  fmpz_mat_t A_flint;
+  fmpz_t den;
+  fmpz_t det;
+  fmpz_mat_t Ainv;
+  fmpz_mat_init(Ainv, A.size(), A[0].size());
+  fmpz_mat_init(A_flint, A.size(), A[0].size());
+  Matrix h(A.size(), Vector(A.size()));
+
+  // std::vector to fmpz_mat_t
+  for (int i = 0; i < A.size(); ++i) {
+    for (int j = 0; j < A[i].size(); ++j) {
+      auto val = fmpz_mat_entry(A_flint, i, j);
+      *val = A[i][j];
+    }
+  }
+
+  // get inverse matrix
+  fmpz_mat_det(det, A_flint);
+  int res = fmpz_mat_inv(Ainv, den, A_flint);
+  if (res == 0) {
+    throw std::domain_error("Matrix A is singular");
+  }
+
+  // calculate adjugate matrix
+  if (*det != *den) {
+    std::cout << "det != den" << std::endl;
+  }
+  fmpz_divexact(den, det, den);
+  fmpz_mat_scalar_divexact_fmpz(Ainv, Ainv, den);
+
+  // fmpz_mat_t to std::vector
+  for (int i = 0; i < A.size(); ++i) {
+    for (int j = 0; j < A[i].size(); ++j) {
+      auto val = fmpz_mat_entry(Ainv, i, j);
+      h[j][i] = fmpz_get_d(val);
+    }
+  }
+  return h;
+}
+
 ExpPoly vertex_normalize(const ExpPoly &num, std::vector<int_t> &den,
                       const Matrix &A, const Vector &b, const Vector &c) {
   auto num_poly = num.get_poly();

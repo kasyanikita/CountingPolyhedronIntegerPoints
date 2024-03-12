@@ -6,7 +6,6 @@
 #include "group_element.h"
 #include "ExpPoly.h"
 #include "snf_class.h"
-#include "auxiliary_dynamic.h"
 #include "Tools.h"
 #include <flint/fmpz_mat.h>
 

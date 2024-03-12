@@ -32,6 +32,9 @@ ExpPoly vertex_normalize(const ExpPoly &num, std::vector<int_t> &den,
 std::vector<int_t> get_denominator(const Vector &c,
                                    std::vector<GroupElement> &g,
                                    const std::vector<std::vector<int_t>> &h);
+std::vector<GroupIP::GroupElement> CalculateGroupElements(
+    const Matrix &P, const Vector &snf_diagonal, const Vector &b);
+Matrix CalculateH(const Matrix &A);
 }  // namespace GroupIP
 
 int_t get_random_number(int_t min, int_t max);
