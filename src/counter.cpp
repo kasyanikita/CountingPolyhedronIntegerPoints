@@ -1,13 +1,6 @@
 #include "counter.h"
 
-Counter::Counter(Matrix& A, Vector& b) {
-  A_ = A;
-  b_ = b; 
-}
-
-mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
-
-  //init
+mpf_class PolyEvaluation(Matrix &A, Vector &b, Vector &c) {
   int_t n = A.size();
   SNFClass snf(A);
   snf.CalculateSNF();
@@ -57,18 +50,4 @@ mpf_class Counter::count_simple_cone(Matrix &A, Vector &b, Vector &c) {
   }
 
   return numer / denom;
-}
-
-mpf_class Counter::count_integer_points(Matrix& A, Vector& b) {
-  mpf_class res = 0;
-  HyperplaneAvoidSolver hyperplane_avoid_vector(A);
-  // auto det = get_determinant(A);
-  auto c = hyperplane_avoid_vector.get_vector(A.size());
-  // std::vector<int_t> c = {1, -1};
-  for (int i = 0; i < A.size(); ++i) {
-    auto Asub = get_sub_matrix(A, i);
-    auto bsub = get_sub_vector(b, i);
-    res += count_simple_cone(Asub, bsub, c);
-  }
-  return res;
 }

@@ -13,16 +13,6 @@
 #include "flint/fmpz_mat.h"
 #include "hyperplane_avoid_solver.h"
 
-class Counter {
- private:
-  Matrix A_;
-  Vector b_;
-  Vector c_;
-  mpf_class count_simple_cone(Matrix &A, Vector &b, Vector &c);
-
- public:
-  Counter(Matrix &A, Vector &b);
-  mpf_class count_integer_points(Matrix &A, Vector &b);
-};
+mpf_class PolyEvaluation(Matrix &A, Vector &b, Vector &c);
 
 #endif  // COUNTINGINTEGERPOINTS_COUNTER_H_
